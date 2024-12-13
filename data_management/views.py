@@ -1,3 +1,30 @@
-from django.shortcuts import render
+from rest_framework import generics,viewsets
+from data_management.models import LiveStock, MilkProduction
+from data_management.serializers import Feed,FeedSerializer,HealthRecord,HealthRecordSerializer, HealthRecord, LivestockSerializer,MilkProductionSerializer
 
-# Create your views here.
+class LivestockListCreateView(generics.ListCreateAPIView):
+    queryset = LiveStock.objects.all()
+    serializer_class = LivestockSerializer
+
+class LivestockDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = LiveStock.objects.all()
+    serializer_class = LivestockSerializer
+
+
+class MilkProductionListCreateView(generics.ListCreateAPIView):
+    queryset = MilkProduction.objects.all()
+    serializer_class = MilkProductionSerializer
+
+
+class MilkProductionDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = MilkProduction.objects.all()
+    serializer_class = MilkProductionSerializer
+
+
+class HealthRecordViewSet(viewsets.ModelViewSet):  
+    queryset = HealthRecord.objects.all()  
+    serializer_class = HealthRecordSerializer  
+
+class FeedViewSet(viewsets.ModelViewSet):  
+    queryset = Feed.objects.all()  
+    serializer_class = FeedSerializer
