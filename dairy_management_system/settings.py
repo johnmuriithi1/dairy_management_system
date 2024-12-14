@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'user_management',
     'data_management',
     'financial_management',
+    'supply_chain',
 
 ]
 
@@ -127,4 +128,4 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-#AUTH_USER_MODEL="user_management.User"
+AUTH_USER_MODEL="user_management.User"

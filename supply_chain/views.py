@@ -2,8 +2,8 @@ from django.db.models import Sum
 from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from .models import Supplier, Product, Order, Inventory
-from .serializers import SupplierSerializer, ProductSerializer, OrderSerializer, InventorySerializer
+from .models import Supplier, Product, Order,FarmerInventory
+from .serializers import SupplierSerializer, ProductSerializer, OrderSerializer, FarmerInventorySerializer
 
 
 class SupplierListCreateView(generics.ListCreateAPIView):
@@ -36,14 +36,14 @@ class OrderDetailView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = OrderSerializer
 
 
-class InventoryListCreateView(generics.ListCreateAPIView):
-    queryset = Inventory.objects.all()
-    serializer_class = InventorySerializer
+class FarmerInventoryListCreateView(generics.ListCreateAPIView):
+    queryset = FarmerInventory.objects.all()
+    serializer_class = FarmerInventorySerializer
 
 
-class InventoryDetailView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Inventory.objects.all()
-    serializer_class = InventorySerializer
+class FarmerInventoryDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = FarmerInventory.objects.all()
+    serializer_class = FarmerInventorySerializer
 
 
 
@@ -54,7 +54,7 @@ def analytics_report(request):
     total_revenue = Order.objects.aggregate(Sum('product__price'))['product__price__sum']
    
     # Inventory levels
-    inventory_data = Inventory.objects.values('product__name').annotate(total=Sum('quantity'))
+    inventory_data = FarmerInventory.objects.values('product__name').annotate(total=Sum('quantity'))
     report = {
         'total_orders': total_orders,
         'total_revenue': total_revenue,

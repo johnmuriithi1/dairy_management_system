@@ -76,10 +76,9 @@ class FarmerSupply(models.Model):
     total_cost = models.DecimalField(max_digits=10, decimal_places=2)
     uploaded_document = models.FileField(upload_to='supply_docs/', null=True, blank=True)
 
-
-"""class SupplierInventory(models.Model):
+class SupplierInventory(models.Model):
     product = models.ForeignKey(Product, related_name='inventory', on_delete=models.CASCADE)
     quantity = models.IntegerField()
 
     def __str__(self):
-        return f"{self.product.name} - {self.quantity} in stock""""
+        return f"{self.product.name} - {self.quantity} in stock"
