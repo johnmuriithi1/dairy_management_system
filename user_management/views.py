@@ -1,13 +1,14 @@
-from rest_framework import generics  
+from rest_framework import generics,filters  
 from rest_framework.response import Response  
-from rest_framework.permissions import AllowAny  
+from rest_framework.permissions import AllowAny,IsAuthenticated  
 from rest_framework_simplejwt.tokens import RefreshToken  
 from django.contrib.auth import authenticate 
 #from django.contrib.auth.models import User 
-from .serializers import UserSerializer 
+from .serializers import UserSerializer, FarmerSerializer, FarmAgentSerializer, VeterinaryPartnerSerializer
 from django.contrib.auth import get_user_model
-
-
+from .models import Farmer, FarmAgent, VeterinaryPartner
+from django_filters.rest_framework import DjangoFilterBackend
+from .permisions import IsFarmer,IsFarmAgent,IsVeterinaryPartner
 User = get_user_model()
 
 class RegisterView(generics.CreateAPIView):
@@ -42,6 +43,7 @@ class UserDetailView(generics.RetrieveUpdateDestroyAPIView):
     """
      queryset = User.objects.all()
      serializer_class = UserSerializer
+     permission_classes = [IsAuthenticated]
 
      def get_object(self):
         """  
@@ -49,3 +51,89 @@ class UserDetailView(generics.RetrieveUpdateDestroyAPIView):
         """
         user = self.request.user
         return user
+
+
+class UserLogoutView():
+    permmission_classes = [IsAuthenticated]
+
+    def post(self,request):
+        try: 
+            # blacklist the refresh token
+            refresh_token = request.data.get('refresh')
+            token = RefreshToken(refresh_token)
+            token.blacklist() # this will add the token to the blacklist
+
+            return Response({"message":"Successfully Logged out."},status=205)
+        except Exception as e:
+            return Response({"error": str(e)},status=400)
+# user management
+class UserCreateView(generics.CreateAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+class UserListView(generics.ListAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [IsAuthenticated]
+
+
+# Farmer Management  
+class FarmerCreateView(generics.CreateAPIView):  
+    queryset = Farmer.objects.all()  
+    serializer_class = FarmerSerializer
+    permission_classes = [IsFarmer]  
+
+class FarmerListView(generics.ListAPIView):  
+    queryset = Farmer.objects.all()  
+    serializer_class = FarmerSerializer  
+    permission_classes = [IsAuthenticated] 
+    filters_backend = (DjangoFilterBackend,filters.SearchFilter)
+    filterset_fields = ['county','category']
+    search_fields = ['name','farmer_code']
+
+
+class FarmerDetailView(generics.RetrieveUpdateDestroyAPIView):  
+    queryset = Farmer.objects.all()  
+    serializer_class = FarmerSerializer  
+    permission_classes = [IsAuthenticated] 
+
+
+# Veterinary Partner Management  
+class VeterinaryPartnerCreateView(generics.CreateAPIView):  
+    queryset = VeterinaryPartner.objects.all()  
+    serializer_class = VeterinaryPartnerSerializer
+    permission_classes = [IsVeterinaryPartner ]
+
+class VeterinaryPartnerListView(generics.ListAPIView):  
+    queryset = VeterinaryPartner.objects.all()  
+    serializer_class = VeterinaryPartnerSerializer  
+    permission_classes = [IsAuthenticated]  
+    filter_backends = (DjangoFilterBackend, filters.SearchFilter)  
+    search_fields = ['name']  # Allow searching by name  
+
+class VeterinaryPartnerDetailView(generics.RetrieveUpdateDestroyAPIView):  
+    queryset = Farmer.objects.all()  
+    serializer_class = VeterinaryPartner  
+    permission_classes = [IsAuthenticated] 
+
+
+# Farm Agent Management 
+class FarmAgentCreateView(generics.CreateAPIView):  
+    queryset = FarmAgent.objects.all()  
+    serializer_class = FarmAgentSerializer
+    permission_classes = [IsFarmAgent]
+
+class FarmAgentDetailView(generics.RetrieveUpdateDestroyAPIView):  
+    queryset = FarmAgent.objects.all()  
+    serializer_class = FarmAgentSerializer  
+    permission_classes = [IsAuthenticated] 
+
+
+# FarmAgent Management with Filtering and Search  
+class FarmAgentListView(generics.ListAPIView):  
+    queryset = FarmAgent.objects.all()  
+    serializer_class = FarmAgentSerializer  
+    permission_classes = [IsAuthenticated]  
+    filter_backends = (DjangoFilterBackend, filters.SearchFilter)  
+    filterset_fields = ['county']  # Allow filtering by county  
+    search_fields = ['full_name', 'agent_code']  # Allow searching by full_name and agent_code
