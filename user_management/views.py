@@ -3,6 +3,9 @@ from rest_framework.response import Response
 from rest_framework.permissions import AllowAny,IsAuthenticated  
 from rest_framework_simplejwt.tokens import RefreshToken  
 from django.contrib.auth import authenticate 
+from django.shortcuts import render, redirect
+from django.contrib.auth import authenticate, login, logout
+from django.contrib import messages
 #from django.contrib.auth.models import User 
 from .serializers import UserSerializer, FarmerSerializer, FarmAgentSerializer, VeterinaryPartnerSerializer
 from django.contrib.auth import get_user_model
@@ -137,3 +140,34 @@ class FarmAgentListView(generics.ListAPIView):
     filter_backends = (DjangoFilterBackend, filters.SearchFilter)  
     filterset_fields = ['county']  # Allow filtering by county  
     search_fields = ['full_name', 'agent_code']  # Allow searching by full_name and agent_code
+
+
+def home(request):
+    return render(request,'dairy_management_system/templates/home.html')
+
+def user_login(request):
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(request,username=username,password=password)
+        if user is not None:
+            login(request,user)
+            return redirect('dashboard')
+        else:
+            messages.error(request,'Inavlid Credentials')
+    return render(request,'users/login.html')
+
+def user_logout(request):
+    logout(request)
+    return render(request,'users/logout.html')
+
+def create_user(request):
+    if request.method == 'POST':
+        serializer = UserSerializer(data=request.POST)
+        if serializer.is_valid():
+            serializer.save()
+            return redirect('login')
+    return render(request,'users/create_user.html')
+
+def user_dashboard(request):
+    return render(request,'users/dashboard.html')

@@ -1,0 +1,9 @@
+<!-- user_management/templates/user_management/logout.html -->
+{% extends 'user_management/base.html' %}
+
+{% block title %}Logout{% endblock %}
+
+{% block content %}
+    <h2>You have successfully logged out.</h2>
+    <a href="{% url 'login' %}" class="btn btn-primary">Login Again</a>
+{% endblock %}
