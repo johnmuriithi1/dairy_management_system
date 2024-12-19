@@ -9,10 +9,11 @@ from django.contrib import messages
 #from django.contrib.auth.models import User 
 from .serializers import UserSerializer, FarmerSerializer, FarmAgentSerializer, VeterinaryPartnerSerializer
 from django.contrib.auth import get_user_model
-from .models import Farmer, FarmAgent, VeterinaryPartner
+from .models import Farmer, FarmAgent, VeterinaryPartner,User
 from django_filters.rest_framework import DjangoFilterBackend
 from .permisions import IsFarmer,IsFarmAgent,IsVeterinaryPartner
-User = get_user_model()
+#User = get_user_model()
+from .forms import UserCReationForm,FarmerForm,FarmAgentForm,VeterinaryPartnerForm
 
 class RegisterView(generics.CreateAPIView):
     """
@@ -143,7 +144,7 @@ class FarmAgentListView(generics.ListAPIView):
 
 
 def home(request):
-    return render(request,'dairy_management_system/templates/home.html')
+    return render(request,'users_management/home.html')
 
 def user_login(request):
     if request.method == 'POST':
@@ -155,19 +156,38 @@ def user_login(request):
             return redirect('dashboard')
         else:
             messages.error(request,'Inavlid Credentials')
-    return render(request,'users/login.html')
+    return render(request,'users_management/login.html')
 
 def user_logout(request):
     logout(request)
-    return render(request,'users/logout.html')
+    return render(request,'users_management/logout.html')
 
 def create_user(request):
     if request.method == 'POST':
-        serializer = UserSerializer(data=request.POST)
-        if serializer.is_valid():
-            serializer.save()
+        form = UserCReationForm(request.POST)
+        if form.is_valid():
+            user = form.save(commit=False)
+            user.set_password(form.cleaned_data['password'])
+            user.save()
+            messages.sucess(request,'User created successfully')
+
             return redirect('login')
-    return render(request,'users/create_user.html')
+    else:
+        form = UserCReationForm()
+    return render(request,'users_management/create_user.html',{'form':form})
 
 def user_dashboard(request):
-    return render(request,'users/dashboard.html')
+    user = request.user
+    user_type = user.user_type
+
+    if user_type == 1: #farmer
+        farmer = Farmer.objects.get(user=user)
+        return render(request,'users_management/dashboard.html',{'farmer':farmer})
+    elif user_type == 2: # Farm Agent
+        farm_agent = FarmAgent.objects.get(user=user)
+        return render(request, 'user_management/dashboard.html', {'farm_agent': farm_agent})
+    elif user_type == 3: # Veterinary Partner
+        veterinary_partner = VeterinaryPartner.objects.get(user=user)
+        return render(request, 'user_management/dashboard.html', {'veterinary_partner':veterinary_partner})
+    else:
+        return render(request, 'user_management/dashboard.html', {'message': 'Unknown user'})

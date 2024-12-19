@@ -8,7 +8,7 @@ class User(AbstractUser):
     USER_TYPE_CHOICES = [
        ( 1, 'Farmer'),
         (2, 'FarmAgent'),
-        (3, 'VeterinaryPartner'),
+        (3, 'VeterinaryPartner')
     ]
     user_type = models.PositiveSmallIntegerField(choices=USER_TYPE_CHOICES)
 

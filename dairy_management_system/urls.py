@@ -9,5 +9,5 @@ urlpatterns = [
     path('api/data-management/', include('data_management.urls'), ),# data management urls
     path('api/financial-management/', include('financial_management.urls')),
     path('api/supply-chain/', include('supply_chain.urls')),
-   path('user/', include('user_management.urls')),
+   path('', include('user_management.urls')),
 ]

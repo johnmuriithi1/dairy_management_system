@@ -1,0 +1,26 @@
+{% extends 'users_management/base.html' %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+    <h2>Welcome, {{ user.username }}!</h2>
+    % if farmer %}
+        <h3>Farmer Dashboard</h3>
+        <p>Phone Contact: {{ farmer.phone_contact }}</p>
+        <p>Email: {{ farmer.email }}</p>
+        <p>Number of Cows: {{ farmer.number_of_cows }}</p>
+        <p>Location: {{ farmer.geo_location }}</p>
+    {% elif farm_agent %}
+        <h3>Farm Agent Dashboard</h3>
+        <p>Agent Code: {{ farm_agent.agent_code }}</p>
+        <p>Full Name: {{ farm_agent.full_name }}</p>
+        <p>Contact: {{ farm_agent.phone_contact }}</p>
+        <p>County: {{ farm_agent.county }}</p>
+    {% elif veterinary_partner %}
+        <h3>Veterinary Partner Dashboard</h3>
+        <p>Name: {{ veterinary_partner.name }}</p>
+        <p>Contact: {{ veterinary_partner.phone_contact }}</p>
+    {% else %}
+        <h3>No User Information Found</h3>
+    {% endif %}
+{% endblock %}
