@@ -13,8 +13,10 @@
         <p><strong>Number of Cows:</strong> {{ farmer.number_of_cows }}</p>
         <p><strong>Location:</strong> {{ farmer.geo_location }}</p>
         <a href="{% url 'profile_edit' %}" class="btn btn-primary">Edit Profile</a>
-        <a href="#" class="btn btn-secondary">View Herd Data</a>
-        <a href="#" class="btn btn-secondary">Request Vet Service</a>
+        <a href="#" class="btn btn-secondary">View Herd Data</a> 
+        <a href="#" class="btn btn-secondary">View Farm Agents</a> 
+        <a href="#" class="btn btn-secondary">View Feeds</a>
+        <a href="#" class="btn btn-secondary">View Reports</a> 
 
     {% elif farm_agent %}
         <h3>Farm Agent Dashboard</h3>
@@ -23,8 +25,9 @@
         <p><strong>Contact:</strong> {{ farm_agent.phone_contact }}</p>
         <p><strong>County:</strong> {{ farm_agent.county }}</p>
         <a href="{% url 'profile_edit' %}" class="btn btn-primary">Edit Profile</a>
-        <a href="#" class="btn btn-secondary">View Assigned Farmers</a>
-        <a href="#" class="btn btn-secondary">Report Milk Collection</a>
+        <a href="#" class="btn btn-secondary">View Assigned Tasks</a> 
+        <a href="#" class="btn btn-secondary">Create Production Report</a> 
+        <a href="#" class="btn btn-secondary">View All Animal Reports</a> 
 
     {% elif veterinary_partner %}
         <h3>Veterinary Partner Dashboard</h3>
