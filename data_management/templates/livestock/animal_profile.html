@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block title %}Animal Profile Detail{% endblock %}
+
+{% block content %}
+  <h1>{{ animalprofile.name }}</h1>
+  <p><strong>Weight:</strong> {{ animalprofile.weight }} kg</p>
+  <p><strong>Date Weighed:</strong> {{ animalprofile.date_weighted }}</p>
+  <p><strong>Remarks:</strong> {{ animalprofile.remarks }}</p>
+  <a href="{% url 'animalprofile_list' %}">Back to Animal Profile List</a>
+{% endblock %}

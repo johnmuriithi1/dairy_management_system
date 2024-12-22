@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+
+{% block title %}Milk Production Detail{% endblock %}
+
+{% block content %}
+  <h1>{{ milkproduction.livestock }}</h1>
+  <p><strong>Production Date:</strong> {{ milkproduction.production_date }}</p>
+  <p><strong>Quantity:</strong> {{ milkproduction.quantity_litres }} liters</p>
+  <a href="{% url 'milkproduction_list' %}">Back to Milk Production List</a>
+{% endblock %}

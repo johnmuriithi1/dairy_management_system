@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+
+{% block title %}Feed Detail{% endblock %}
+
+{% block content %}
+  <h1>{{ feed.name }}</h1>
+  <p><strong>Quantity:</strong> {{ feed.quantity }}</p>
+  <p><strong>Price:</strong> {{ feed.price }}</p>
+  <a href="{% url 'feed_list' %}">Back to Feed List</a>
+{% endblock %}

@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block title %}Health Record Detail{% endblock %}
+
+{% block content %}
+  <h1>{{ healthrecord.animal }}</h1>
+  <p><strong>Date:</strong> {{ healthrecord.date }}</p>
+  <p><strong>Description:</strong> {{ healthrecord.description }}</p>
+  <p><strong>Treatment:</strong> {{ healthrecord.treatment }}</p>
+  <a href="{% url 'healthrecord_list' %}">Back to Health Record List</a>
+{% endblock %}

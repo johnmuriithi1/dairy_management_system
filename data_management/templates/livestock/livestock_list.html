@@ -1,0 +1,15 @@
+{% extends 'users_management/base.html' %}
+
+{% block title %}Livestock List{% endblock %}
+
+{% block content %}
+  <h1>Livestock List</h1>
+  <ul>
+    {% for livestock in livestock %}
+      <li>
+        <a href="{% url 'livestock_detail' livestock.pk %}">{{ livestock.name }}</a>
+      </li>
+    {% endfor %}
+  </ul>
+  <a href="{% url 'livestock_create' %}">Create New Livestock</a>
+{% endblock %}

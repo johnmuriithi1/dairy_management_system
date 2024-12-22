@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block title %}Livestock Detail{% endblock %}
+
+{% block content %}
+  <h1>{{ livestock.name }}</h1>
+  <p><strong>Date of Birth:</strong> {{ livestock.date_of_birth }}</p>
+  <p><strong>Cow Tag:</strong> {{ livestock.cow_tag }}</p>
+  {% if livestock.photo %}
+    <img src="{{ livestock.photo.url }}" alt="{{ livestock.name }}" width="200">
+  {% endif %}
+  <a href="{% url 'livestock_list' %}">Back to Livestock List</a> 
+{% endblock %}
