@@ -1,6 +1,6 @@
 from django.urls import path
 from user_management.views import( RegisterView,UserDetailView,LogInView,
-    UserCreateView, UserListView, FarmerCreateView, FarmerListView, FarmerDetailView,
+    UserCreateView, UserListView,edit_profile,complete_veterinary_partner_profile,complete_farmer_profile,complete_farm_agent_profile, FarmerCreateView, FarmerListView, FarmerDetailView,
     FarmAgentCreateView, FarmAgentListView, FarmAgentDetailView,  
     VeterinaryPartnerCreateView, VeterinaryPartnerListView, VeterinaryPartnerDetailView,user_dashboard,user_login,create_user,user_logout,home)
 
@@ -29,4 +29,8 @@ urlpatterns = [
     path('logout/', user_logout, name='logout'),
     path('create_user/', create_user, name='create_user'),
     path('dashboard/', user_dashboard, name='dashboard'),
+    path('profile_edit/', edit_profile, name='profile_edit'),
+    path('complete_farm_agent_profile/', complete_farm_agent_profile, name='complete_farm_agent_profile'),
+    path('complete_veterinary_partner_profile/', complete_veterinary_partner_profile, name='complete_veterinary_partner_profile'),
+    path('complete_farmer_profile/',complete_farmer_profile, name='complete_farmer_profile'),
 ]

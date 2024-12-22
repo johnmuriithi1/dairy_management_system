@@ -77,14 +77,14 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'dairy_management_system.wsgi.application'
 
-
+AUTH_USER_MODEL = 'user_management.User'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': os.path.join(os.getcwd(),'db.sqlite3')
     }
 }
 

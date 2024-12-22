@@ -1,6 +1,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-from django.contrib.auth import get_user_model
+from django.utils import timezone 
+
 
 
 
@@ -10,12 +11,17 @@ class User(AbstractUser):
         (2, 'FarmAgent'),
         (3, 'VeterinaryPartner')
     ]
-    user_type = models.PositiveSmallIntegerField(choices=USER_TYPE_CHOICES)
+    user_type = models.PositiveSmallIntegerField(choices=USER_TYPE_CHOICES,blank=True,null=True)
+
+    def __str__(self):
+        return self.username
+
 
 class Farmer(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE,default=None)
     farmer_code = models.CharField(max_length=20, unique=True)
     name = models.CharField(max_length=100)
-    registration_date = models.DateField()
+    registration_date = models.DateField(default=timezone.now) 
     category = models.CharField(max_length=50)
     county = models.CharField(max_length=50)
     location = models.CharField(max_length=100)
@@ -26,17 +32,26 @@ class Farmer(models.Model):
     geo_location = models.CharField(max_length=100)
     uploaded_document = models.FileField(upload_to='farmer_docs/', null=True, blank=True)
 
+    def __str__(self):
+        return self.user.username
 
 class FarmAgent(models.Model):
     agent_code = models.CharField(max_length=20, unique=True)
+    user = models.OneToOneField(User, on_delete=models.CASCADE,default=None)
     full_name = models.CharField(max_length=100)
     identification_number = models.CharField(max_length=20)
     phone_contact = models.CharField(max_length=15)
     county = models.CharField(max_length=50)
     location = models.CharField(max_length=100)
     uploaded_document = models.FileField(upload_to='agent_docs/', null=True, blank=True)
-
+    
+    def __str__(self):
+        return self.user.username
 
 class VeterinaryPartner(models.Model):
     name = models.CharField(max_length=100)
+    user = models.OneToOneField(User, on_delete=models.CASCADE,default=None)
     phone_contact = models.CharField(max_length=15)
+
+    def __str__(self):
+        return self.user.username

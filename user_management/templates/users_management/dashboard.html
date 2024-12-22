@@ -2,24 +2,38 @@
 
 {% block title %}Dashboard{% endblock %}
 
+
 {% block content %}
     <h2>Welcome, {{ user.username }}!</h2>
-    % if farmer %}
+
+    {% if farmer %}
         <h3>Farmer Dashboard</h3>
-        <p>Phone Contact: {{ farmer.phone_contact }}</p>
-        <p>Email: {{ farmer.email }}</p>
-        <p>Number of Cows: {{ farmer.number_of_cows }}</p>
-        <p>Location: {{ farmer.geo_location }}</p>
+        <p><strong>Phone Contact:</strong> {{ farmer.phone_contact }}</p>
+        <p><strong>Email:</strong> {{ farmer.email }}</p>
+        <p><strong>Number of Cows:</strong> {{ farmer.number_of_cows }}</p>
+        <p><strong>Location:</strong> {{ farmer.geo_location }}</p>
+        <a href="{% url 'profile_edit' %}" class="btn btn-primary">Edit Profile</a>
+        <a href="#" class="btn btn-secondary">View Herd Data</a>
+        <a href="#" class="btn btn-secondary">Request Vet Service</a>
+
     {% elif farm_agent %}
         <h3>Farm Agent Dashboard</h3>
-        <p>Agent Code: {{ farm_agent.agent_code }}</p>
-        <p>Full Name: {{ farm_agent.full_name }}</p>
-        <p>Contact: {{ farm_agent.phone_contact }}</p>
-        <p>County: {{ farm_agent.county }}</p>
+        <p><strong>Agent Code:</strong> {{ farm_agent.agent_code }}</p>
+        <p><strong>Full Name:</strong> {{ farm_agent.full_name }}</p>
+        <p><strong>Contact:</strong> {{ farm_agent.phone_contact }}</p>
+        <p><strong>County:</strong> {{ farm_agent.county }}</p>
+        <a href="{% url 'profile_edit' %}" class="btn btn-primary">Edit Profile</a>
+        <a href="#" class="btn btn-secondary">View Assigned Farmers</a>
+        <a href="#" class="btn btn-secondary">Report Milk Collection</a>
+
     {% elif veterinary_partner %}
         <h3>Veterinary Partner Dashboard</h3>
-        <p>Name: {{ veterinary_partner.name }}</p>
-        <p>Contact: {{ veterinary_partner.phone_contact }}</p>
+        <p><strong>Name:</strong> {{ veterinary_partner.name }}</p>
+        <p><strong>Contact:</strong> {{ veterinary_partner.phone_contact }}</p>
+        <a href="{% url 'profile_edit' %}" class="btn btn-primary">Edit Profile</a>
+        <a href="#" class="btn btn-secondary">View Service Requests</a>
+        <a href="#" class="btn btn-secondary">Manage Veterinary Products</a>
+
     {% else %}
         <h3>No User Information Found</h3>
     {% endif %}

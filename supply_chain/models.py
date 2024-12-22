@@ -66,7 +66,7 @@ class FarmerOrder(models.Model):
     uploaded_document = models.FileField(upload_to='order_docs/', null=True, blank=True)
 
 class FarmerSupply(models.Model):
-    farmer = models.ForeignKey(Farmer, on_delete=models.CASCADE)
+    farmer = models.ForeignKey(Farmer, on_delete=models.CASCADE,default=None)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     order_reference = models.CharField(max_length=50)
     quantity_supplied = models.PositiveIntegerField()

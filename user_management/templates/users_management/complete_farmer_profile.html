@@ -1,0 +1,14 @@
+{% extends 'users_management/base.html' %}
+
+{% block title %}Complete Farmer Profile{% endblock %}
+
+{% block content %}
+<h2>Complete Farmer Profile</h2>
+
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }} 
+    <button type="submit">Submit</button>
+</form>
+
+{% endblock %}

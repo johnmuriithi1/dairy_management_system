@@ -2,11 +2,11 @@ from django.db import models
 from user_management.models import Farmer
 
 class LiveStock(models.Model):
-    farmer = models.ForeignKey(Farmer, on_delete=models.CASCADE,default='Null')
+    farmer = models.ForeignKey(Farmer, on_delete=models.CASCADE,default=None)
     name = models.CharField(max_length=100)
     date_of_birth = models.DateField()
     #breed = models.ForeignKey('DairyCowBreed',null=True, on_delete=models.SET_NULL)
-    cow_tag = models.CharField(max_length=20, unique=True,default='Null')
+    cow_tag = models.CharField(max_length=20, unique=True, default=None)
     photo = models.ImageField(upload_to='cow_photos/', null=True, blank=True)
     uploaded_document = models.FileField(upload_to='cow_docs/', null=True, blank=True)
 
