@@ -32,5 +32,5 @@ urlpatterns = [
     # Feed URLs
     path('feed/', views.feed_list, name='feed_list'),
     path('feed/create/', views.feed_create, name='feed_create'),
-    path('feed/<int:pk>/', views.feed_detail, name='feed_detail'), 
+    #path('feed/<int:pk>/', views.feed_detail, name='feed_detail'),
 ]
