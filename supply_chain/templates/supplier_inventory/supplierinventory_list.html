@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block title %}Supplier Inventories{% endblock %}
+{% block content %}
+<h1>Supplier Inventories</h1>
+<a href="{% url 'inventory:supplierinventory_create' %}" class="btn btn-primary mb-3">Add Supplier Inventory</a>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Product</th>
+            <th>Quantity</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for inventory in supplierinventories %}
+        <tr>
+            <td>{{ inventory.product }}</td>
+            <td>{{ inventory.quantity }}</td>
+            <td>
+                <a href="{% url 'inventory:supplierinventory_update' inventory.pk %}" class="btn btn-sm btn-warning">Edit</a>
+                <a href="{% url 'inventory:supplierinventory_delete' inventory.pk %}" class="btn btn-sm btn-danger">Delete</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="3" class="text-center">No supplier inventories found.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

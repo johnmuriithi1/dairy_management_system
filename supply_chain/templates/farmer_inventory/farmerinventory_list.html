@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block title %}Farmer Inventories{% endblock %}
+{% block content %}
+<h1>Farmer Inventories</h1>
+<a href="{% url 'inventory:farmerinventory_create' %}" class="btn btn-primary mb-3">Add Farmer Inventory</a>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Farmer</th>
+            <th>Product</th>
+            <th>Quantity</th>
+            <th>Min Stock</th>
+            <th>Max Stock</th>
+            <th>Reorder Level</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for inventory in farmerinventories %}
+        <tr>
+            <td>{{ inventory.farmer }}</td>
+            <td>{{ inventory.product }}</td>
+            <td>{{ inventory.quantity }}</td>
+            <td>{{ inventory.minimum_stock_level }}</td>
+            <td>{{ inventory.maximum_stock_level }}</td>
+            <td>{{ inventory.reorder_level }}</td>
+            <td>
+                <a href="{% url 'inventory:farmerinventory_update' inventory.pk %}" class="btn btn-sm btn-warning">Edit</a>
+                <a href="{% url 'inventory:farmerinventory_delete' inventory.pk %}" class="btn btn-sm btn-danger">Delete</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="7" class="text-center">No farmer inventories found.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

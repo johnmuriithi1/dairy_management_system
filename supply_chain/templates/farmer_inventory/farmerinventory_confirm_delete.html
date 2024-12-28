@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block title %}Delete Farmer Inventory{% endblock %}
+{% block content %}
+<h1>Delete Farmer Inventory</h1>
+<p>Are you sure you want to delete this farmer inventory entry?</p>
+<form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Yes, delete</button>
+    <a href="{% url 'inventory:farmerinventory_list' %}" class="btn btn-secondary">Cancel</a>
+</form>
+{% endblock %}

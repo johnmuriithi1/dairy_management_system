@@ -7,11 +7,12 @@ from django.utils import timezone
 
 class User(AbstractUser):
     USER_TYPE_CHOICES = [
-       ( 1, 'Farmer'),
+        (1, 'Farmer'),
         (2, 'FarmAgent'),
-        (3, 'VeterinaryPartner')
+        (3, 'VeterinaryPartner'),
+        (4, 'FarmWorker'),  # Added FarmWorker type
     ]
-    user_type = models.PositiveSmallIntegerField(choices=USER_TYPE_CHOICES,blank=True,null=True)
+    user_type = models.PositiveSmallIntegerField(choices=USER_TYPE_CHOICES, blank=True, null=True)
 
     def __str__(self):
         return self.username
@@ -52,6 +53,19 @@ class VeterinaryPartner(models.Model):
     name = models.CharField(max_length=100)
     user = models.OneToOneField(User, on_delete=models.CASCADE,default=None)
     phone_contact = models.CharField(max_length=15)
+
+    def __str__(self):
+        return self.user.username
+
+
+class FarmWorker(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, default=None)
+    full_name = models.CharField(max_length=100)
+    phone_contact = models.CharField(max_length=15)
+    farmer = models.ForeignKey(Farmer, on_delete=models.CASCADE, related_name='workers') #Added farmer relationship
+    employment_date = models.DateField(default=timezone.now)
+    address = models.CharField(max_length=200, blank=True, null=True)
+    skills = models.TextField(blank=True, null=True)
 
     def __str__(self):
         return self.user.username

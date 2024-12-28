@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block title %}Farmer Orders{% endblock %}
+{% block content %}
+<h1>Farmer Orders</h1>
+<a href="{% url 'inventory:farmerorder_create' %}" class="btn btn-primary mb-3">Create Farmer Order</a>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Farmer</th>
+            <th>Product</th>
+            <th>Order Ref</th>
+            <th>Quantity</th>
+            <th>Unit Price</th>
+            <th>VAT</th>
+            <th>Total Cost</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for farmerorder in farmerorders %}
+        <tr>
+            <td>{{ farmerorder.farmer }}</td>
+            <td>{{ farmerorder.product }}</td>
+            <td>{{ farmerorder.order_reference }}</td>
+            <td>{{ farmerorder.quantity_ordered }}</td>
+            <td>{{ farmerorder.unit_price }}</td>
+            <td>{{ farmerorder.vat_amount }}</td>
+            <td>{{ farmerorder.total_cost }}</td>
+            <td>{{ farmerorder.status }}</td>
+            <td>
+                <a href="{% url 'inventory:farmerorder_update' farmerorder.pk %}" class="btn btn-sm btn-warning">Edit</a>
+                <a href="{% url 'inventory:farmerorder_delete' farmerorder.pk %}" class="btn btn-sm btn-danger">Delete</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="9" class="text-center">No farmer orders found.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

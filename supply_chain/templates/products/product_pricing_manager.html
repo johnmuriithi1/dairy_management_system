@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block title %}Manage Product Pricing{% endblock %}
+{% block content %}
+<h1>Manage Product Pricing for {{ product.name }}</h1>
+<form method="post">
+    {% csrf_token %}
+    {{ formset.management_form }}
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Price Group</th>
+                <th>Unit Price</th>
+                <th>Discount Rate</th>
+                <th>Minimum Quantity for Discount</th>
+                <th>Farmer Category</th>
+                <th>Delete</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for form in

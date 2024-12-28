@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block title %}Products{% endblock %}
+{% block content %}
+<h1>Products</h1>
+<a href="{% url 'inventory:product_create' %}" class="btn btn-primary">Add Product</a>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Category</th>
+            <th>Supplier</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for product in products %}
+        <tr>
+            <td>{{ product.name }}</td>
+            <td>{{ product.category }}</td>
+            <td>{{ product.supplier }}</td>
+            <td>
+                <a href="{% url 'inventory:product_update' product.pk %}" class="btn btn-sm btn-warning">Edit</a>
+                <a href="{% url 'inventory:product_delete' product.pk %}" class="btn btn-sm btn-danger">Delete</a>
+                <a href="{% url 'inventory:product_pricing_manage' product.pk %}" class="btn btn-sm btn-info">Pricing</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="4">No products found.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

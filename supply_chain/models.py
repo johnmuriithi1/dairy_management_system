@@ -62,6 +62,12 @@ class FarmerOrder(models.Model):
     unit_price = models.DecimalField(max_digits=10, decimal_places=2)
     vat_amount = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     total_cost = models.DecimalField(max_digits=10, decimal_places=2)
+    STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('processing', 'Processing'),
+        ('delivered', 'Delivered'),
+        ('cancelled', 'Cancelled'),
+    ]
     status = models.CharField(max_length=20, choices=[])
     uploaded_document = models.FileField(upload_to='order_docs/', null=True, blank=True)
 
