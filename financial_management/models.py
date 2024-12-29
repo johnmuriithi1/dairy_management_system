@@ -94,3 +94,83 @@ class MonthlyExpense(models.Model):
             GROUP BY month
             """
         )
+
+# Create a view for weekly income
+class WeeklyIncome(models.Model):
+    week = models.CharField(max_length=10)  # e.g., '2023-W27'
+    total_income = models.FloatField()
+
+    class Meta:
+        managed = False  # This view is not managed by Django ORM
+
+    @classmethod
+    def get_weekly_income(cls):
+        return cls.objects.raw(
+            """
+            SELECT 
+                strftime('%Y-W%W', date) as week, 
+                SUM(amount) as total_income
+            FROM income
+            GROUP BY week
+            """
+        )
+
+# Create a view for weekly expense
+class WeeklyExpense(models.Model):
+    week = models.CharField(max_length=10)  # e.g., '2023-W27'
+    total_expense = models.FloatField()
+
+    class Meta:
+        managed = False  # This view is not managed by Django ORM
+
+    @classmethod
+    def get_weekly_expense(cls):
+        return cls.objects.raw(
+            """
+            SELECT 
+                strftime('%Y-W%W', date) as week, 
+                SUM(amount) as total_expense
+            FROM expense
+            GROUP BY week
+            """
+        )
+
+# Create a view for daily income
+class DailyIncome(models.Model):
+    day = models.DateField()
+    total_income = models.FloatField()
+
+    class Meta:
+        managed = False  # This view is not managed by Django ORM
+
+    @classmethod
+    def get_daily_income(cls):
+        return cls.objects.raw(
+            """
+            SELECT 
+                date as day, 
+                SUM(amount) as total_income
+            FROM income
+            GROUP BY date
+            """
+        )
+
+# Create a view for daily expense
+class DailyExpense(models.Model):
+    day = models.DateField()
+    total_expense = models.FloatField()
+
+    class Meta:
+        managed = False  # This view is not managed by Django ORM
+
+    @classmethod
+    def get_daily_expense(cls):
+        return cls.objects.raw(
+            """
+            SELECT 
+                date as day, 
+                SUM(amount) as total_expense
+            FROM expense
+            GROUP BY date
+            """
+        )
