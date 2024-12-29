@@ -3,6 +3,7 @@ from rest_framework import generics
 from .models import Income, Expense
 from .serializers import IncomeSerializer, ExpenseSerializer
 
+
 class IncomeListCreateView(generics.ListCreateAPIView):
     queryset = Income.objects.all()
     serializer_class = IncomeSerializer

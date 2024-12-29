@@ -38,8 +38,8 @@ urlpatterns = [
     path('orders/create/', views.OrderCreateView.as_view(), name='order_create'),
     path('orders/update/<int:pk>/', views.OrderUpdateView.as_view(), name='order_update'),
     path('orders/delete/<int:pk>/', views.OrderDeleteView.as_view(), name='order_delete'),
-    path('orders/<int:pk>/detail/', views.order_detail, name='order_detail'), #Order detail
-    path('orders/template/', views.OrderTemplateView.as_view(), name='order_template'), #Order template
+    #path('orders/<int:pk>/detail/', views.order_detail, name='order_detail'), #Order detail
+    #path('orders/template/', views.OrderTemplateView.as_view(), name='order_template'), #Order template
 
     # FarmerOrder URLs
     path('farmerorders/', views.FarmerOrderListView.as_view(), name='farmerorder_list'),
