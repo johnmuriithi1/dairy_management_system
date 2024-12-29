@@ -1,176 +1,42 @@
 from django.db import models
-from django.db.models import Sum, F
+from django.core.exceptions import ValidationError
+
+class Category(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+
+    def __str__(self):
+        return self.name
 
 class Income(models.Model):
     source = models.CharField(max_length=100)
-    amount = models.FloatField()
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
     date = models.DateField()
     description = models.TextField(blank=True, null=True)
+    category = models.ForeignKey(Category, on_delete=models.PROTECT, related_name='incomes', null=True, blank=True)
+
+    class Meta:
+        ordering = ['-date']
 
     def __str__(self):
-        return f"{self.source}: Ksh{self.amount}"
+        return f"{self.source}: {self.amount}"
+
+    def clean(self):
+        if self.amount < 0:
+            raise ValidationError("Amount cannot be negative.")
+
 
 class Expense(models.Model):
-    category = models.CharField(max_length=100)
-    amount = models.FloatField()
+    category = models.ForeignKey(Category, on_delete=models.PROTECT, related_name='expenses')
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
     date = models.DateField()
     description = models.TextField(blank=True, null=True)
 
+    class Meta:
+        ordering = ['-date']
+
     def __str__(self):
-        return f"{self.category}: Ksh{self.amount}"
+        return f"{self.category}: {self.amount}"
 
-# Create a view for total income by source
-class IncomeBySource(models.Model):
-    source = models.CharField(max_length=100)
-    total_income = models.FloatField()
-
-    class Meta:
-        managed = False  # This view is not managed by Django ORM
-
-    @classmethod
-    def get_income_by_source(cls):
-        return cls.objects.raw(
-            """
-            SELECT source, SUM(amount) as total_income
-            FROM income
-            GROUP BY source
-            """
-        )
-
-# Create a view for total expense by category
-class ExpenseByCategory(models.Model):
-    category = models.CharField(max_length=100)
-    total_expense = models.FloatField()
-
-    class Meta:
-        managed = False  # This view is not managed by Django ORM
-
-    @classmethod
-    def get_expense_by_category(cls):
-        return cls.objects.raw(
-            """
-            SELECT category, SUM(amount) as total_expense
-            FROM expense
-            GROUP BY category
-            """
-        )
-
-# Create a view for monthly income
-class MonthlyIncome(models.Model):
-    month = models.CharField(max_length=7)  # e.g., '2023-07'
-    total_income = models.FloatField()
-
-    class Meta:
-        managed = False  # This view is not managed by Django ORM
-
-    @classmethod
-    def get_monthly_income(cls):
-        return cls.objects.raw(
-            """
-            SELECT 
-                strftime('%Y-%m', date) as month, 
-                SUM(amount) as total_income
-            FROM income
-            GROUP BY month
-            """
-        )
-
-# Create a view for monthly expense
-class MonthlyExpense(models.Model):
-    month = models.CharField(max_length=7)  # e.g., '2023-07'
-    total_expense = models.FloatField()
-
-    class Meta:
-        managed = False  # This view is not managed by Django ORM
-
-    @classmethod
-    def get_monthly_expense(cls):
-        return cls.objects.raw(
-            """
-            SELECT 
-                strftime('%Y-%m', date) as month, 
-                SUM(amount) as total_expense
-            FROM expense
-            GROUP BY month
-            """
-        )
-
-# Create a view for weekly income
-class WeeklyIncome(models.Model):
-    week = models.CharField(max_length=10)  # e.g., '2023-W27'
-    total_income = models.FloatField()
-
-    class Meta:
-        managed = False  # This view is not managed by Django ORM
-
-    @classmethod
-    def get_weekly_income(cls):
-        return cls.objects.raw(
-            """
-            SELECT 
-                strftime('%Y-W%W', date) as week, 
-                SUM(amount) as total_income
-            FROM income
-            GROUP BY week
-            """
-        )
-
-# Create a view for weekly expense
-class WeeklyExpense(models.Model):
-    week = models.CharField(max_length=10)  # e.g., '2023-W27'
-    total_expense = models.FloatField()
-
-    class Meta:
-        managed = False  # This view is not managed by Django ORM
-
-    @classmethod
-    def get_weekly_expense(cls):
-        return cls.objects.raw(
-            """
-            SELECT 
-                strftime('%Y-W%W', date) as week, 
-                SUM(amount) as total_expense
-            FROM expense
-            GROUP BY week
-            """
-        )
-
-# Create a view for daily income
-class DailyIncome(models.Model):
-    day = models.DateField()
-    total_income = models.FloatField()
-
-    class Meta:
-        managed = False  # This view is not managed by Django ORM
-
-    @classmethod
-    def get_daily_income(cls):
-        return cls.objects.raw(
-            """
-            SELECT 
-                date as day, 
-                SUM(amount) as total_income
-            FROM income
-            GROUP BY date
-            """
-        )
-
-# Create a view for daily expense
-class DailyExpense(models.Model):
-    day = models.DateField()
-    total_expense = models.FloatField()
-
-    class Meta:
-        managed = False  # This view is not managed by Django ORM
-
-    @classmethod
-    def get_daily_expense(cls):
-        return cls.objects.raw(
-            """
-            SELECT 
-                date as day, 
-                SUM(amount) as total_expense
-            FROM expense
-            GROUP BY date
-            """
-        )
+    def clean(self):
+        if self.amount < 0:
+            raise ValidationError("Amount cannot be negative.")
