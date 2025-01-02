@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'data_management',
     'financial_management',
     'supply_chain',
+    'advisory_support',
     'django_filters',
 
 ]
