@@ -1,40 +1,7 @@
-from rest_framework import generics,viewsets
-from data_management.models import LiveStock, MilkProduction
-from data_management.serializers import Feed,FeedSerializer,HealthRecord,HealthRecordSerializer, HealthRecord, LivestockSerializer,MilkProductionSerializer
+from django.shortcuts import render, redirect
 from django.contrib import messages
 from .models import LiveStock, AnimalProfile, MilkProduction, HealthRecord, Feed
 from .forms import LiveStockForm, AnimalProfileForm, MilkProductionForm, HealthRecordForm, FeedForm
-from django.shortcuts import render, redirect
-
-
-class LivestockListCreateView(generics.ListCreateAPIView):
-    queryset = LiveStock.objects.all()
-    serializer_class = LivestockSerializer
-
-class LivestockDetailView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = LiveStock.objects.all()
-    serializer_class = LivestockSerializer
-
-
-class MilkProductionListCreateView(generics.ListCreateAPIView):
-    queryset = MilkProduction.objects.all()
-    serializer_class = MilkProductionSerializer
-
-
-class MilkProductionDetailView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = MilkProduction.objects.all()
-    serializer_class = MilkProductionSerializer
-
-
-class HealthRecordViewSet(viewsets.ModelViewSet):  
-    queryset = HealthRecord.objects.all()  
-    serializer_class = HealthRecordSerializer  
-
-class FeedViewSet(viewsets.ModelViewSet):  
-    queryset = Feed.objects.all()  
-    serializer_class = FeedSerializer
-
-
 
 def livestock_list(request):
     livestock = LiveStock.objects.all()
@@ -42,7 +9,7 @@ def livestock_list(request):
 
 def livestock_create(request):
     if request.method == 'POST':
-        form = LiveStockForm(request.POST, request.FILES)
+        form = LiveStockForm(request.POST, request.FILES)  # Keep request.FILES for file uploads
         if form.is_valid():
             form.save()
             messages.success(request, 'Livestock created successfully!')

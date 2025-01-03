@@ -1,14 +1,9 @@
 from django.urls import path
-from .views import LivestockDetailView,LivestockListCreateView,MilkProductionDetailView,MilkProductionListCreateView
 from . import views
-urlpatterns = [
-    #api views
-    path('api/livestock/', LivestockListCreateView.as_view(), name='livestock-list-create'),
-    path('api/livestock/<int:pk>', LivestockDetailView.as_view(), name='livestock-detail'),
-    path('api/milk-production/', MilkProductionListCreateView.as_view(), name='milk-production-create'),
-    path('api/milk-production/<int:pk>', MilkProductionDetailView.as_view(), name='milk-production-detail'),
 
-    #html Views
+app_name = 'data_management'
+
+urlpatterns = [
     # Livestock URLs
     path('livestock/', views.livestock_list, name='livestock_list'),
     path('livestock/create/', views.livestock_create, name='livestock_create'),
@@ -32,5 +27,4 @@ urlpatterns = [
     # Feed URLs
     path('feed/', views.feed_list, name='feed_list'),
     path('feed/create/', views.feed_create, name='feed_create'),
-    #path('feed/<int:pk>/', views.feed_detail, name='feed_detail'),
 ]
