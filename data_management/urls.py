@@ -5,9 +5,12 @@ app_name = 'data_management'
 
 urlpatterns = [
     # Livestock URLs
-    path('livestock/', views.livestock_list, name='livestock_list'),
+    path('livestock/<str:animal_type>/', views.livestock_list, name='livestock_list'),
+    path('livestock/types/', views.livestock_type_list, name='livestock_type_list'),
     path('livestock/create/', views.livestock_create, name='livestock_create'),
     path('livestock/<int:pk>/', views.livestock_detail, name='livestock_detail'),
+    path('livestock/<int:pk>/edit/', views.livestock_edit, name='livestock_edit'),
+    path('livestock/<int:pk>/delete/', views.livestock_delete, name='livestock_delete'),
 
     # AnimalProfile URLs
     path('animalprofile/', views.animalprofile_list, name='animalprofile_list'),

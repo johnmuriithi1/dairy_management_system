@@ -1,22 +1,36 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect,get_object_or_404
 from django.contrib import messages
 from .models import LiveStock, AnimalProfile, MilkProduction, HealthRecord, Feed
 from .forms import LiveStockForm, AnimalProfileForm, MilkProductionForm, HealthRecordForm, FeedForm
 
-def livestock_list(request):
-    livestock = LiveStock.objects.all()
-    return render(request, 'livestock/livestock_list.html', {'livestock': livestock})
-
-def livestock_create(request):
+def create_object(request, model_form, template_name, redirect_url):
     if request.method == 'POST':
-        form = LiveStockForm(request.POST, request.FILES)  # Keep request.FILES for file uploads
+        form = model_form(request.POST, request.FILES)  # Handle file uploads
         if form.is_valid():
             form.save()
-            messages.success(request, 'Livestock created successfully!')
-            return redirect('livestock_list')
+            messages.success(request, f'{model_form.Meta.model._meta.verbose_name} created successfully!')
+            return redirect(redirect_url)
+        else:
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f"{field.capitalize()}: {error}")
     else:
-        form = LiveStockForm()
-    return render(request, 'livestock/livestock_form.html', {'form': form})
+        form = model_form()
+    return render(request, template_name, {'form': form})
+
+def livestock_type_list(request):
+    livestock_types = list(LiveStock.objects.values_list('animal_type', flat=True).distinct()) # Convert to list here
+    print(livestock_types)  # Print the list (now a Python list)
+    return render(request, 'livestock/livestock_type_list.html', {'livestock_types': livestock_types})
+
+def livestock_list(request, animal_type):
+    """Displays livestock of a specific type."""
+    livestock = LiveStock.objects.filter(animal_type=animal_type)
+    return render(request, 'livestock/livestock_list.html', {'livestock': livestock, 'animal_type': animal_type})
+
+
+def livestock_create(request):
+    return create_object(request, LiveStockForm, 'livestock/livestock_form.html', 'data_management:livestock_list')  # Using namespace
 
 def livestock_detail(request, pk):
     livestock = LiveStock.objects.get(pk=pk)
@@ -27,15 +41,7 @@ def animalprofile_list(request):
     return render(request, 'animalprofile/animalprofile_list.html', {'animalprofiles': animalprofiles})
 
 def animalprofile_create(request):
-    if request.method == 'POST':
-        form = AnimalProfileForm(request.POST)
-        if form.is_valid():
-            form.save()
-            messages.success(request, 'Animal Profile created successfully!')
-            return redirect('animalprofile_list')
-    else:
-        form = AnimalProfileForm()
-    return render(request, 'animalprofile/animalprofile_form.html', {'form': form})
+    return create_object(request, AnimalProfileForm, 'animalprofile/animalprofile_form.html', 'animalprofile_list')
 
 def animalprofile_detail(request, pk):
     animalprofile = AnimalProfile.objects.get(pk=pk)
@@ -46,15 +52,7 @@ def milkproduction_list(request):
     return render(request, 'milkproduction/milkproduction_list.html', {'milkproductions': milkproductions})
 
 def milkproduction_create(request):
-    if request.method == 'POST':
-        form = MilkProductionForm(request.POST)
-        if form.is_valid():
-            form.save()
-            messages.success(request, 'Milk Production record created successfully!')
-            return redirect('milkproduction_list')
-    else:
-        form = MilkProductionForm()
-    return render(request, 'milkproduction/milkproduction_form.html', {'form': form})
+    return create_object(request, MilkProductionForm, 'milkproduction/milkproduction_form.html', 'milkproduction_list')
 
 def milkproduction_detail(request, pk):
     milkproduction = MilkProduction.objects.get(pk=pk)
@@ -65,15 +63,7 @@ def healthrecord_list(request):
     return render(request, 'healthrecord/healthrecord_list.html', {'healthrecords': healthrecords})
 
 def healthrecord_create(request):
-    if request.method == 'POST':
-        form = HealthRecordForm(request.POST)
-        if form.is_valid():
-            form.save()
-            messages.success(request, 'Health Record created successfully!')
-            return redirect('healthrecord_list')
-    else:
-        form = HealthRecordForm()
-    return render(request, 'healthrecord/healthrecord_form.html', {'form': form})
+    return create_object(request, HealthRecordForm, 'healthrecord/healthrecord_form.html', 'healthrecord_list')
 
 def healthrecord_detail(request, pk):
     healthrecord = HealthRecord.objects.get(pk=pk)
@@ -84,12 +74,29 @@ def feed_list(request):
     return render(request, 'feed/feed_list.html', {'feeds': feeds})
 
 def feed_create(request):
+    return create_object(request, FeedForm, 'feed/feed_form.html', 'feed_list')
+
+
+def livestock_edit(request, pk):
+    livestock = get_object_or_404(LiveStock, pk=pk) # Get the livestock or return a 404 error
     if request.method == 'POST':
-        form = FeedForm(request.POST)
+        form = LiveStockForm(request.POST, request.FILES, instance=livestock) # instance to update existing object
         if form.is_valid():
             form.save()
-            messages.success(request, 'Feed created successfully!')
-            return redirect('feed_list')
+            messages.success(request, 'Livestock updated successfully!')
+            return redirect('data_management:livestock_detail', pk=livestock.pk) # Redirect to detail view after edit
+        else:
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f"{field.capitalize()}: {error}")
     else:
-        form = FeedForm()
-    return render(request, 'feed/feed_form.html', {'form':form})
+        form = LiveStockForm(instance=livestock) # Populate form with existing data
+    return render(request, 'livestock/livestock_form.html', {'form': form, 'livestock': livestock}) # Pass livestock to context
+
+def livestock_delete(request, pk):
+    livestock = get_object_or_404(LiveStock, pk=pk)
+    if request.method == 'POST':
+        livestock.delete()
+        messages.success(request, "Livestock deleted successfully.")
+        return redirect('data_management:livestock_list')
+    return render(request, 'livestock/livestock_confirm_delete.html', {'livestock': livestock})

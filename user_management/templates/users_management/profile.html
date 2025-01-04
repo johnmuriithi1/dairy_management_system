@@ -1,7 +1,20 @@
-{% extends 'users_management/base.html' %}
-{% block title %}Profile{% endblock %}
+{% extends 'user_management/base.html' %} 
 {% block content %}
-    <h1>User Profile</h1>
-    <p>Username: {{ user.username }}</p>
-    <p>Email: {{ user.email }}</p>
-    {% endblock %}
+<h1>Profile</h1>
+
+{% if user_type == 'Farmer' %}
+    <p>Farmer Code: {{ profile.farmer_code }}</p>
+    <p>Farm Name: {{ profile.farm_name }}</p>
+    <p>Location: {{ profile.location }}</p>
+    {% elif user_type == 'Farm Agent' %}
+    <p>Agent ID: {{ profile.agent_id }}</p>
+    <p>Agency: {{ profile.agency }}</p>
+    {% elif user_type == 'Veterinary Partner' %}
+    <p>Veterinary ID: {{ profile.veterinary_id }}</p>
+    <p>Clinic Name: {{ profile.clinic_name }}</p>
+    {% endif %}
+
+<p>User Name: {{ request.user.username }}</p>
+<p>Email: {{ request.user.email }}</p>
+<a href="{% url 'user_management:profile_edit' %}">Edit Profile</a>
+{% endblock %}

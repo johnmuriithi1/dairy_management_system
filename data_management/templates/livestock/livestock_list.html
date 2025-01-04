@@ -1,15 +1,36 @@
+{# data_management/templates/livestock/livestock_list.html #}
 {% extends 'users_management/base.html' %}
 
-{% block title %}Livestock List{% endblock %}
+{% block title %}{{ animal_type }} List{% endblock %}
 
 {% block content %}
-  <h1>Livestock List</h1>
-  <ul>
-    {% for livestock in livestock %}
-      <li>
-        <a href="{% url 'livestock_detail' livestock.pk %}">{{ livestock.name }}</a>
-      </li>
-    {% endfor %}
-  </ul>
-  <a href="{% url 'livestock_create' %}">Create New Livestock</a>
+    <h1>{{ animal_type }} List</h1>
+    {% if livestock %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Breed</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for animal in livestock %}
+                    <tr>
+                        <td><a href="{% url 'data_management:livestock_detail' animal.pk %}">{{ animal.name }}</a></td>
+                        <td>{{ animal.breed }}</td>
+                        <td>
+                            <a href="{% url 'data_management:livestock_edit' animal.pk %}">Edit</a>
+                            <a href="{% url 'data_management:livestock_delete' animal.pk %}">Delete</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No {{ animal_type }} found.</p>
+    {% endif %}
+
+    <a href="{% url 'data_management:livestock_create' %}">Create New Livestock</a>
+    <a href="{% url 'data_management:livestock_type_list' %}">Back to Types</a>
 {% endblock %}

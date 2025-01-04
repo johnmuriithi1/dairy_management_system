@@ -12,8 +12,8 @@
         <p><strong>Email:</strong> {{ farmer.email }}</p>
         <p><strong>Number of Cows:</strong> {{ farmer.number_of_cows }}</p>
         <p><strong>Location:</strong> {{ farmer.geo_location }}</p>
-        <a href="{% url 'profile_edit' %}" class="btn btn-primary">Edit Profile</a>
-        <a href="#" class="btn btn-secondary">View Herd Data</a> 
+        <a href="{% url 'user_management:profile_edit' %}" class="btn btn-primary">Edit Profile</a>
+        <a href="{% url 'data_management:livestock_list' %}" class="btn btn-primary">View Herd Data</a> 
         <a href="#" class="btn btn-secondary">View Farm Agents</a> 
         <a href="#" class="btn btn-secondary">View Feeds</a>
         <a href="#" class="btn btn-secondary">View Reports</a> 
@@ -24,7 +24,7 @@
         <p><strong>Full Name:</strong> {{ farm_agent.full_name }}</p>
         <p><strong>Contact:</strong> {{ farm_agent.phone_contact }}</p>
         <p><strong>County:</strong> {{ farm_agent.county }}</p>
-        <a href="{% url 'profile_edit' %}" class="btn btn-primary">Edit Profile</a>
+        <a href="{% url 'user_management:profile_edit' %}" class="btn btn-primary">Edit Profile</a>
         <a href="#" class="btn btn-secondary">View Assigned Tasks</a> 
         <a href="#" class="btn btn-secondary">Create Production Report</a> 
         <a href="#" class="btn btn-secondary">View All Animal Reports</a> 
@@ -33,7 +33,7 @@
         <h3>Veterinary Partner Dashboard</h3>
         <p><strong>Name:</strong> {{ veterinary_partner.name }}</p>
         <p><strong>Contact:</strong> {{ veterinary_partner.phone_contact }}</p>
-        <a href="{% url 'profile_edit' %}" class="btn btn-primary">Edit Profile</a>
+        <a href="{% url 'user_management:profile_edit' %}" class="btn btn-primary">Edit Profile</a>
         <a href="#" class="btn btn-secondary">View Service Requests</a>
         <a href="#" class="btn btn-secondary">Manage Veterinary Products</a>
 

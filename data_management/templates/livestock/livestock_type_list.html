@@ -1,0 +1,16 @@
+{# data_management/templates/livestock/livestock_type_list.html #}
+{% extends 'users_management/base.html' %}
+
+{% block title %}Livestock Types{% endblock %}
+
+{% block content %}
+    <h1>Livestock Types</h1>
+    <ul>
+        {% for livestock_type in livestock_types %}
+        <li>
+            <a href="{% url 'data_management:livestock_list' livestock_type %}">{{ livestock_type }}</a>
+        </li>
+    {% endfor %}
+    </ul>
+    <a href="{% url 'data_management:livestock_create' %}">Create New Livestock</a>
+{% endblock %}

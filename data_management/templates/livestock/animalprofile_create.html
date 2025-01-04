@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'users_management/base.html' %}
 
 {% block title %}Animal Profiles{% endblock %}
 
@@ -11,5 +11,5 @@
       </li>
     {% endfor %}
   </ul>
-  <a href="{% url 'animalprofile_create' %}">Create New Animal Profile</a>
+  <a href="{% url 'data_management:animalprofile_create' %}">Create New Animal Profile</a>
 {% endblock %}

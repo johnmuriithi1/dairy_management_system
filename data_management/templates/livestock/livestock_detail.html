@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'users_management/base.html' %}
 
 {% block title %}Livestock Detail{% endblock %}
 
@@ -8,6 +8,9 @@
   <p><strong>Cow Tag:</strong> {{ livestock.cow_tag }}</p>
   {% if livestock.photo %}
     <img src="{{ livestock.photo.url }}" alt="{{ livestock.name }}" width="200">
-  {% endif %}
-  <a href="{% url 'livestock_list' %}">Back to Livestock List</a> 
+{% else %}
+    <p>No photo available.</p>
+{% endif %}
+
+  <a href="{% url 'data_management:livestock_list' %}">Back to Livestock List</a>
 {% endblock %}

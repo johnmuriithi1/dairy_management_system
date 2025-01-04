@@ -9,6 +9,7 @@ from .normal_views import (
     complete_farm_agent_profile,
     complete_veterinary_partner_profile,
     complete_farmer_profile,
+    profile,
 )
 app_name = 'user_management'
 
@@ -17,6 +18,7 @@ urlpatterns = [
     path('', home, name='home'),
     path('login/', user_login, name='login'),
     path('logout/', user_logout, name='logout'),
+    path('profile/', profile, name='profile'),
     path('create_user/', create_user, name='create_user'),
     path('dashboard/', user_dashboard, name='dashboard'),
     path('profile_edit/', edit_profile, name='profile_edit'),

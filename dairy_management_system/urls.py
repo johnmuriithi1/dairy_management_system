@@ -1,5 +1,7 @@
 from django.contrib import admin
 from django.urls import path,include
+from django.conf import settings
+from django.conf.urls.static import static
 #from user_management.normal_views import home
 
 urlpatterns = [
@@ -13,3 +15,5 @@ urlpatterns = [
     path('api/user-management/', include('user_management.api_urls', namespace='user_management_api')),
     path('api/data-management/', include('data_management.api_urls', namespace='data_management_api')),
 ]
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
