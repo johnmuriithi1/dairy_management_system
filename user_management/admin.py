@@ -1,19 +1,9 @@
 from django.contrib import admin
-from django.contrib.auth import get_user_model
-from .forms import UserCReationForm 
-from django.contrib.auth.admin import UserAdmin
+from .models import User, Farmer, FarmAgent, VeterinaryPartner, FarmWorker
 
-
-User = get_user_model()
-
-class CustomUserAdmin(UserAdmin):
-    add_form = UserCReationForm
-    form = UserCReationForm
-    model = User
-    list_display =['email','username']
-
-admin.site.register(User,CustomUserAdmin)
-
-
-
-
+# Register your models here.
+admin.site.register(User)
+admin.site.register(Farmer)
+admin.site.register(FarmAgent)
+admin.site.register(VeterinaryPartner)
+admin.site.register(FarmWorker)

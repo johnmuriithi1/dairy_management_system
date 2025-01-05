@@ -1,61 +1,83 @@
 from django import forms
-from .models import LiveStock, AnimalProfile, MilkProduction, HealthRecord, Feed
-from django.forms import DateInput, Select, Textarea, FileInput, NumberInput
+from .models import (
+    LiveStockType, LiveStock, AnimalProfile, MilkProduction,
+    HealthRecord, Feed, VaccinationRecord, BreedingRecord,
+    DeathRecord, Event
+)
+
+class LiveStockTypeForm(forms.ModelForm):
+    class Meta:
+        model = LiveStockType
+        fields = '__all__'
 
 class LiveStockForm(forms.ModelForm):
     class Meta:
         model = LiveStock
-        fields = ['farmer', 'name', 'date_of_birth', 'animal_type', 'other_animal_type', 'breed', 'tag', 'photo', 'uploaded_document']
+        fields = '__all__'
         widgets = {
-            'date_of_birth': DateInput(attrs={'type': 'date'}),
-            'animal_type': Select(choices=LiveStock.ANIMAL_TYPES),
-            'photo': FileInput(attrs={'accept': 'image/*'}),
-            'uploaded_document': FileInput(attrs={'accept': '.pdf,.doc,.docx'}),
+            'date_of_birth': forms.DateInput(attrs={'type': 'date'}),
         }
-    breed = forms.CharField(required=False)
-    tag = forms.CharField(required=False)
-    photo = forms.ImageField(required=False)
-    uploaded_document = forms.FileField(required=False)
-
-    def clean(self):
-        cleaned_data = super().clean()
-        animal_type = cleaned_data.get('animal_type')
-        other_animal_type = cleaned_data.get('other_animal_type')
-
-        if animal_type == 'other' and not other_animal_type:
-            self.add_error('other_animal_type', "Please specify the animal type when 'Other' is selected.")
-        elif animal_type != 'other':
-            cleaned_data['other_animal_type'] = None
-
-        return cleaned_data
 
 class AnimalProfileForm(forms.ModelForm):
     class Meta:
         model = AnimalProfile
-        fields = '__all__'  # You might want to list fields explicitly here as well
+        fields = '__all__'
         widgets = {
-            'date_weighted': DateInput(attrs={'type': 'date'}),
-            'remarks': Textarea(attrs={'rows': 3}),
+            'date_weighted': forms.DateInput(attrs={'type': 'date'}),
         }
 
 class MilkProductionForm(forms.ModelForm):
     class Meta:
         model = MilkProduction
-        fields = '__all__'  # You might want to list fields explicitly here as well
+        fields = '__all__'
         widgets = {
-            'production_date': DateInput(attrs={'type': 'date'}),
-            'quantity_litres': NumberInput(attrs={'step': '0.1'}),
+            'production_date': forms.DateInput(attrs={'type': 'date'}),
         }
 
 class HealthRecordForm(forms.ModelForm):
     class Meta:
         model = HealthRecord
-        fields = '__all__'  # You might want to list fields explicitly here as well
+        fields = '__all__'
         widgets = {
-            'date': DateInput(attrs={'type': 'date'}),  # Added widget for date field
+            'date': forms.DateInput(attrs={'type': 'date'}),
         }
 
 class FeedForm(forms.ModelForm):
     class Meta:
         model = Feed
-        fields = '__all__'  # You might want to list fields explicitly here as well
+        fields = '__all__'
+
+class VaccinationRecordForm(forms.ModelForm):
+    class Meta:
+        model = VaccinationRecord
+        fields = '__all__'
+        widgets = {
+            'date_given': forms.DateInput(attrs={'type': 'date'}),
+            'next_vaccination_date': forms.DateInput(attrs={'type': 'date'}),
+        }
+
+
+class BreedingRecordForm(forms.ModelForm):
+    class Meta:
+        model = BreedingRecord
+        fields = '__all__'
+        widgets = {
+            'breeding_date': forms.DateInput(attrs={'type': 'date'}),
+            'expected_birth_date': forms.DateInput(attrs={'type': 'date'}),
+        }
+
+class DeathRecordForm(forms.ModelForm):
+    class Meta:
+        model = DeathRecord
+        fields = '__all__'
+        widgets = {
+            'date_of_death': forms.DateInput(attrs={'type': 'date'}),
+        }
+
+class EventForm(forms.ModelForm):
+    class Meta:
+        model = Event
+        fields = '__all__'
+        widgets = {
+            'date': forms.DateInput(attrs={'type': 'date'}),
+        }

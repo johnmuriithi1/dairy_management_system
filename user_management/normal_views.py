@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
+from django.db import IntegrityError
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from .forms import UserCReationForm, FarmerProfileForm, FarmAgentProfileForm, VeterinaryPartnerProfileForm
@@ -30,34 +31,47 @@ def create_user(request):
     if request.method == 'POST':
         form = UserCReationForm(request.POST)
         if form.is_valid():
-            user = form.save(commit=False)
-            password = form.cleaned_data['password']  # Get the plain password from the form
-            user.set_password(password)  # Hash the password using Django's method
-            user.user_type = form.cleaned_data['user_type']
-            user.save()
+            user = form.save()
 
             if user.user_type == 1:  # Farmer
-                farmer_code = str(uuid.uuid4())[:8]
-                farmer = Farmer(user=user, farmer_code=farmer_code)
-                farmer.save()
-                messages.success(request, 'Farmer user created successfully!')
-                return redirect('user_management:complete_farmer_profile') #added namespace
+                try:
+                    farmer_code = str(uuid.uuid4())[:8]
+                    farmer = Farmer(user=user, farmer_code=farmer_code)
+                    farmer.save()
+                    messages.success(request, 'Farmer user created successfully!')
+                    return redirect('user_management:complete_farmer_profile')
+
+                except IntegrityError:
+                    messages.error(request, "A farmer with that code already exists. Please try again.")
+                    user.delete() # important to delete the user if the farmer creation fails
+                    return redirect('user_management:create_user') # Redirect back to the form
 
             elif user.user_type == 2:  # FarmAgent
-                farm_agent = FarmAgent(user=user)
-                farm_agent.save()
-                messages.success(request, 'Farm Agent user created successfully!')
-                return redirect('user_management:complete_farm_agent_profile') #added namespace
+                try:
+                    farm_agent = FarmAgent(user=user, agent_code=str(uuid.uuid4())[:8], identification_number=str(uuid.uuid4())[:8])
+                    farm_agent.save()
+                    messages.success(request, 'Farm Agent user created successfully!')
+                    return redirect('user_management:complete_farm_agent_profile')
+                except IntegrityError:
+                    messages.error(request, "A Farm Agent with that code or identification number already exists. Please try again.")
+                    user.delete()
+                    return redirect('user_management:create_user')
 
             elif user.user_type == 3:  # VeterinaryPartner
-                veterinary_partner = VeterinaryPartner(user=user)
-                veterinary_partner.save()
-                messages.success(request, 'Veterinary Partner user created successfully!')
-                return redirect('user_management:complete_veterinary_partner_profile') #added namespace
+                try:
+                    veterinary_partner = VeterinaryPartner(user=user)
+                    veterinary_partner.save()
+                    messages.success(request, 'Veterinary Partner user created successfully!')
+                    return redirect('user_management:complete_veterinary_partner_profile')
+                except IntegrityError: #This is unlikely for this model, but good practice to include
+                    messages.error(request, "An error occurred creating the Veterinary Partner. Please try again.")
+                    user.delete()
+                    return redirect('user_management:create_user')
 
             else:
                 messages.error(request, "Invalid user type.")
-                return redirect('user_management:create_user') #added namespace
+                user.delete()
+                return redirect('user_management:create_user')
         else:
             context = {'form': form}
             return render(request, 'users_management/create_user.html', context)

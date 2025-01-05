@@ -21,6 +21,7 @@ class User(AbstractUser):
 class Farmer(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE,default=None)
     farmer_code = models.CharField(max_length=20, unique=True)
+    farmer_code = models.CharField(max_length=20, unique=True)
     name = models.CharField(max_length=100)
     registration_date = models.DateField(default=timezone.now) 
     category = models.CharField(max_length=50)
@@ -40,7 +41,8 @@ class FarmAgent(models.Model):
     agent_code = models.CharField(max_length=20, unique=True)
     user = models.OneToOneField(User, on_delete=models.CASCADE,default=None)
     full_name = models.CharField(max_length=100)
-    identification_number = models.CharField(max_length=20)
+    identification_number = models.CharField(max_length=20, unique=True)
+    agent_code = models.CharField(max_length=20, unique=True)
     phone_contact = models.CharField(max_length=15)
     county = models.CharField(max_length=50)
     location = models.CharField(max_length=100)

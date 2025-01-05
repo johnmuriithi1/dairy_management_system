@@ -1,12 +1,11 @@
 {% extends 'users_management/base.html' %}
-
-{% block title %}Create Livestock{% endblock %}
-
+{% block title %}{% if livestock %}Edit Livestock{% else %}Add Livestock{% endif %}{% endblock %}
 {% block content %}
-  <h1>Create Livestock</h1>
-  <form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Save</button>
-  </form>
+    <h1>{% if livestock %}Edit Livestock{% else %}Add Livestock{% endif %}</h1>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">Save</button>
+        <a href="{% url 'data_management:livestock_list' %}" class="btn btn-secondary">Cancel</a>
+    </form>
 {% endblock %}

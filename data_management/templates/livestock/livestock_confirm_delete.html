@@ -1,13 +1,11 @@
 {% extends 'users_management/base.html' %}
-
-{% block title %}Delete Livestock{% endblock %}
-
+{% block title %}Delete {{ livestock.name }}{% endblock %}
 {% block content %}
-    <h1>Delete Livestock</h1>
+    <h1>Delete {{ livestock.name }}</h1>
     <p>Are you sure you want to delete {{ livestock.name }}?</p>
     <form method="post">
         {% csrf_token %}
-        <button type="submit">Yes, delete</button>
-        <a href="{% url 'data_management:livestock_detail' livestock.pk %}">No, go back</a>
+        <button type="submit" class="btn btn-danger">Yes, Delete</button>
+        <a href="{% url 'data_management:livestock_detail' livestock.pk %}" class="btn btn-secondary">Cancel</a>
     </form>
 {% endblock %}
