@@ -1,0 +1,39 @@
+{% extends 'users_management/base.html' %}
+{% block title %}{{ livestock_type.name }} Details{% endblock %}
+{% block content %}
+    <h1>{{ livestock_type.name }}</h1>
+
+    <h2>Animals of this Breed ({{ zipped_data|length }})</h2>
+
+    {% if has_livestock %}
+
+        <a href="{% url 'data_management:animalprofile_create' %}?livestock={{zipped_data.0.0.pk}}" class="btn btn-primary">Create Animal Profile</a>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Livestock Name</th>
+                <th>Profile</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for livestock, profile in zipped_data %}
+                <tr>
+                    <td>{{ livestock.name }}</td>
+                    <td>
+                        {% if profile %}
+                            <a href="{% url 'data_management:animalprofile_detail' profile.pk %}" class="btn btn-sm btn-info">View Profile</a>
+                        {% else %}
+                            No Profile Created
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+        <p>No Livestock of this type has been added yet</p>
+    {% endif %}
+
+    <a href="{% url 'data_management:livestock_list'%}" class="btn btn-secondary">Back to Livestock List</a>
+
+{% endblock %}

@@ -3,30 +3,30 @@
 {% block content %}
     <h1>Livestock List</h1>
     <a href="{% url 'data_management:livestock_create' %}" class="btn btn-primary">Add Livestock</a>
+
     <table class="table">
         <thead>
             <tr>
-                <th>Name</th>
+                <th>Livestock</th>
                 <th>Type</th>
-                <th>Breed</th>
-                <th>Actions</th>
+                <th>Count</th>
+                <th>Actions</th> {# Added Actions Header #}
             </tr>
         </thead>
         <tbody>
-            {% for livestock in livestock %}
-                <tr>
-                    <td>{{ livestock.name }}</td>
-                    <td>{{ livestock.livestock_type }}</td>
-                    <td>{{ livestock.breed }}</td>
-                    <td>
-                        <a href="{% url 'data_management:livestock_detail' livestock.pk %}" class="btn btn-sm btn-info">Details</a>
-                        <a href="{% url 'data_management:livestock_edit' livestock.pk %}" class="btn btn-sm btn-warning">Edit</a>
-                        <a href="{% url 'data_management:livestock_delete' livestock.pk %}" class="btn btn-sm btn-danger">Delete</a>
-                    </td>
-                </tr>
-            {% empty %}
-                <tr><td colspan="4">No livestock found.</td></tr>
-            {% endfor %}
+        {% for item in livestock_grouped %}
+            <tr>
+                <td>{{ item.name }}</td>
+                <td>{{ item.livestock_type }}</td>
+                <td>{{ item.count }}</td>
+                <td> {# Actions Cell #}
+                    <a href="{% url 'data_management:livestock_type_detail' item.livestock_type.pk %}" class="btn btn-sm btn-info">View Animals</a>
+                </td>
+            </tr>
+        {% empty %}
+            <tr><td colspan="4">No livestock found.</td></tr>
+        {% endfor %}
         </tbody>
     </table>
+
 {% endblock %}

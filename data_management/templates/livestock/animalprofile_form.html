@@ -1,0 +1,97 @@
+{% extends 'users_management/base.html' %}
+
+{% block title %}{% if form.instance.pk %}Edit{% else %}Create{% endif %} Animal Profile{% endblock %}
+
+{% block content %}
+    <h1>{% if form.instance.pk %}Edit{% else %}Create{% endif %} Animal Profile</h1>
+
+    <form method="post" enctype="multipart/form-data" class="card">
+        {% csrf_token %}
+        <div class="card-body">
+            {% if form.errors %}
+                <div class="alert alert-danger">
+                    Please correct the errors below.
+                </div>
+            {% endif %}
+
+            <div class="row">  {# Use a row for better layout #}
+                <div class="col-md-6"> {# Left Column #}
+                    {{ form.name.label_tag }} {{ form.name }}
+                    {% if form.name.errors %}
+                        <div class="invalid-feedback d-block">
+                            {{ form.name.errors|join:", " }}
+                        </div>
+                    {% endif %}
+                    <br>
+
+                    **{{ form.livestock_type.label_tag }}**  {{ form.livestock_type }}
+                    {% if form.livestock_type.errors %}
+                        <div class="invalid-feedback d-block">
+                            {{ form.livestock_type.errors|join:", " }}
+                        </div>
+                    {% endif %}
+                    <br>
+
+                    {{ form.weight.label_tag }} {{ form.weight }}
+                    {% if form.weight.errors %}
+                        <div class="invalid-feedback d-block">
+                            {{ form.weight.errors|join:", " }}
+                        </div>
+                    {% endif %}
+                    <br>
+
+                    {{ form.date_weighted.label_tag }} {{ form.date_weighted }}
+                    {% if form.date_weighted.errors %}
+                        <div class="invalid-feedback d-block">
+                            {{ form.date_weighted.errors|join:", " }}
+                        </div>
+                    {% endif %}
+                    <br>
+
+                    {{ form.date_of_birth.label_tag }} {{ form.date_of_birth }}
+                    {% if form.date_of_birth.errors %}
+                        <div class="invalid-feedback d-block">
+                            {{ form.date_of_birth.errors|join:", " }}
+                        </div>
+                    {% endif %}
+                    <br>
+                </div>
+                <div class="col-md-6"> {# Right Column #}
+                    {{ form.tag.label_tag }} {{ form.tag }}
+                    {% if form.tag.errors %}
+                        <div class="invalid-feedback d-block">
+                            {{ form.tag.errors|join:", " }}
+                        </div>
+                    {% endif %}
+                    <br>
+
+                    {{ form.photo.label_tag }} {{ form.photo }}
+                    {% if form.photo.errors %}
+                        <div class="invalid-feedback d-block">
+                            {{ form.photo.errors|join:", " }}
+                        </div>
+                    {% endif %}
+                    <br>
+
+                    {{ form.uploaded_document.label_tag }} {{ form.uploaded_document }}
+                    {% if form.uploaded_document.errors %}
+                        <div class="invalid-feedback d-block">
+                            {{ form.uploaded_document.errors|join:", " }}
+                        </div>
+                    {% endif %}
+                    <br>
+                    {{ form.remarks.label_tag }} {{ form.remarks }}
+                    {% if form.remarks.errors %}
+                        <div class="invalid-feedback d-block">
+                            {{ form.remarks.errors|join:", " }}
+                        </div>
+                    {% endif %}
+                    <br>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Save</button>
+            <a href="{% url 'data_management:animalprofile_list' %}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+{% endblock %}

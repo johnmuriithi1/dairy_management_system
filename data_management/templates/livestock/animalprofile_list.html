@@ -1,15 +1,36 @@
 {% extends 'users_management/base.html' %}
-
 {% block title %}Animal Profiles{% endblock %}
-
 {% block content %}
-  <h1>Animal Profiles</h1>
-  <ul>
-    {% for profile in animalprofiles %}
-      <li>
-        {{ profile.name }} - Weight: {{ profile.weight }} kg ({{ profile.date_weighted }}) 
-      </li>
-    {% endfor %}
-  </ul>
-  <a href="{% url 'data_management:animalprofile_create' %}">Create New Animal Profile</a>
+    <h1>Animal Profiles</h1>
+
+    <a href="{% url 'data_management:animalprofile_create' %}" class="btn btn-primary mb-3">Create Animal Profile</a> {# Create button #}
+
+    {% if animalprofiles %} {# Check if there are profiles before rendering the table #}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Livestock</th>
+                    {# Add other relevant table headers #}
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for profile in animalprofiles %}
+                    <tr>
+                        <td>{{ profile.name }}</td>
+                        <td>{{ profile.livestock }}</td>
+                        
+                        <td>
+                            <a href="{% url 'data_management:animalprofile_detail' profile.pk %}" class="btn btn-sm btn-info">Details</a>
+                            <a href="{% url 'data_management:animalprofile_update' profile.pk %}" class="btn btn-sm btn-warning">Edit</a>
+                            <a href="{% url 'data_management:animalprofile_delete' profile.pk %}" class="btn btn-sm btn-danger">Delete</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No animal profiles found.</p>
+    {% endif %}
 {% endblock %}
