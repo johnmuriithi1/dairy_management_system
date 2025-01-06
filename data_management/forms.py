@@ -21,11 +21,9 @@ class DatePickerInput(forms.DateInput):
 class LiveStockForm(forms.ModelForm):
     def __init__(self, user, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        if user.is_superuser:
-            self.fields['farmer'].queryset = Farmer.objects.all()
-        else:
+        if not user.is_superuser:  # More concise check
             self.fields['farmer'].queryset = Farmer.objects.filter(user=user)
-        self.fields['livestock_type'].queryset = LiveStockType.objects.all()
+        self.fields['livestock_type'].queryset = LiveStockType.objects.all() #All livestock types should be available
         self.fields['farmer'].label = "Farmer"
         self.fields['livestock_type'].label = "Livestock Type"
 
@@ -34,20 +32,35 @@ class LiveStockForm(forms.ModelForm):
         fields = ['farmer', 'livestock_type', 'name']
         widgets = {
             'farmer': forms.Select(attrs={'class': 'select2'}),
-            'livestock_type': forms.Select(attrs={'class': 'select2'}),
+            'livestock_type': forms.SelectMultiple(attrs={'class': 'select2'}), #Use select multiple for many to many fields
         }
 
 
 class AnimalProfileForm(forms.ModelForm):
-    livestock_type = forms.ModelChoiceField(queryset=LiveStockType.objects.all(), required=True, label="Livestock Type")
+    def __init__(self, user, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if user.is_superuser:
+            self.fields['livestock'].queryset = LiveStock.objects.all()
+        else:
+            try:
+                farmer = Farmer.objects.get(user=user)
+                self.fields['livestock'].queryset = LiveStock.objects.filter(farmer=farmer)
+            except Farmer.DoesNotExist:
+                self.fields['livestock'].queryset = LiveStock.objects.none()
+
+        self.fields['name'].required = True
+        self.fields['date_of_birth'].required = True
+        self.fields['weight'].required = True
+        self.fields['livestock'].required = True
 
     class Meta:
         model = AnimalProfile
-        fields = ['livestock_type', 'name', 'weight', 'date_weighted', 'remarks', 'date_of_birth', 'tag', 'photo', 'uploaded_document']
+        fields = ['livestock', 'name', 'weight', 'date_weighted', 'remarks', 'date_of_birth', 'tag', 'photo', 'uploaded_document']
         widgets = {
             'date_weighted': forms.DateInput(attrs={'type': 'date'}),
-            'date_of_birth': forms.DateInput(attrs={'type': 'date'}),
-        }
+            'date_of_birth': forms.DateInput(attrs={'type': 'date'}),}
+
+
 
 class MilkProductionForm(forms.ModelForm):
     class Meta:

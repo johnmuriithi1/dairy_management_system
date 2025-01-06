@@ -10,7 +10,7 @@ class LiveStockType(models.Model): # eg Cows,goats,camels etc
 
 class LiveStock(models.Model): # aka breed eg fresian,dorper for sheep
     farmer = models.ForeignKey(Farmer, on_delete=models.CASCADE, default=None)
-    livestock_type = models.ForeignKey(LiveStockType, on_delete=models.CASCADE)
+    livestock_type = models.ManyToManyField(LiveStockType, related_name='livestock') 
     name = models.CharField(max_length=100)
     
 
@@ -18,7 +18,7 @@ class LiveStock(models.Model): # aka breed eg fresian,dorper for sheep
         return self.name
 
 class AnimalProfile(models.Model):
-    livestock_type = models.ForeignKey(LiveStockType, on_delete=models.CASCADE)  # Link to LiveStockType model
+    livestock = models.ForeignKey(LiveStock, on_delete=models.CASCADE, related_name='profiles')
     weight = models.FloatField()
     date_weighted = models.DateField(default=timezone.now)
     remarks = models.TextField(null=True, blank=True)

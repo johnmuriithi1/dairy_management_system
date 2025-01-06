@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from itertools import groupby
+from django.db.models import Prefetch
 from .models import (
     LiveStockType, LiveStock, AnimalProfile, MilkProduction,
     HealthRecord, Feed, VaccinationRecord, BreedingRecord,
@@ -19,7 +20,9 @@ def create_object(request, model, form_class, template_name, redirect_url):
     if request.method == 'POST':
         form = form_class(request.user, request.POST, request.FILES) if 'user' in form_class.__init__.__code__.co_varnames else form_class(request.POST, request.FILES)
         if form.is_valid():
-            instance = form.save()
+            instance = form.save(commit=False)  # Save without committing M2M data
+            instance.save() #Save the instance first to get an id
+            form.save_m2m() # Save the many to many data
             messages.success(request, f'{model._meta.verbose_name} created successfully!')
 
             # Determine redirect based on redirect_url
@@ -94,37 +97,22 @@ def animalprofile_list(request, livestock_pk=None):
 
 def animalprofile_create(request):
     if request.method == 'POST':
-        form = AnimalProfileForm(request.POST, request.FILES)
+        form = AnimalProfileForm(request.user, request.POST, request.FILES) #Pass the user here
         if form.is_valid():
             animal_profile = form.save(commit=False)
-
-            livestock_type_pk = request.POST.get('livestock_type') #Get livestock type from form
-
-            if livestock_type_pk:
-                try:
-                    livestock_type = LiveStockType.objects.get(pk=livestock_type_pk)
-                    #Create livestock instance
-                    livestock = LiveStock.objects.create(farmer=request.user.farmer,livestock_type=livestock_type, name=form.cleaned_data['name'])
-                    animal_profile.livestock = livestock
-                except LiveStockType.DoesNotExist:
-                    messages.error(request, "Invalid livestock type selected.")
-                    return render(request, 'livestock/animalprofile_form.html', {'form': form})
-            else:
-                messages.error(request, "Livestock type is required.")
-                return render(request, 'livestock/animalprofile_form.html', {'form': form})
-
             animal_profile.save()
             messages.success(request, 'Animal Profile created successfully!')
             return redirect('data_management:animalprofile_detail', pk=animal_profile.pk)
         else:
             return render(request, 'livestock/animalprofile_form.html', {'form': form})
     else:
-        form = AnimalProfileForm()
-        return render(request, 'livestock/animalprofile_form.html', {'form': form})
+        form = AnimalProfileForm(request.user) #Pass the user here
+    return render(request, 'livestock/animalprofile_form.html', {'form': form})
 
 def animalprofile_detail(request, pk):
-    profile = get_object_or_404(AnimalProfile, pk=pk)
-    return render(request, 'livestock/animalprofile_detail.html', {'profile': profile})
+    animalprofile = get_object_or_404(AnimalProfile, pk=pk)  # Ensure you're fetching the object
+    context = {'animalprofile': animalprofile} #Correct way of passing the context
+    return render(request, 'livestock/animalprofile_detail.html', context)
 
 def animalprofile_update(request, pk):
     return update_object(request, AnimalProfile, AnimalProfileForm, 'livestock/animalprofile_form.html', 'data_management:animalprofile_detail', pk)
@@ -174,36 +162,29 @@ def healthrecord_delete(request, pk):
 
 #LiveStock
 def livestock_list(request):
-    livestock = LiveStock.objects.all().order_by('livestock_type', 'name')
-
+    livestock = LiveStock.objects.all().order_by('name').prefetch_related(Prefetch('livestock_type'), Prefetch('profiles')) #Correct way to prefetch
     livestock_grouped = []
-    for (livestock_type, name), livestock_in_type in groupby(livestock, key=lambda x: (x.livestock_type, x.name)):
-        count = len(list(livestock_in_type))
-        profile = None
-        if count == 1:
-            try:
-                # Get the profile if it exists
-                livestock_instance = LiveStock.objects.filter(livestock_type=livestock_type, name=name).first()
-                profile = AnimalProfile.objects.get(livestock=livestock_instance)
-            except AnimalProfile.DoesNotExist:
-                pass # Handle the case where the profile doesn't exist
-        livestock_grouped.append({
-            'livestock_type': livestock_type,
-            'name': name,
-            'count': count,
-            'profile': profile, # Add profile to context
-        })
+    for livestock_instance in livestock:
+        for livestock_type in livestock_instance.livestock_type.all():
+            profile = livestock_instance.profiles.first()
+            livestock_grouped.append({
+                'livestock_type': livestock_type,
+                'name': livestock_instance.name,
+                'profile': profile,
+            })
     context = {'livestock_grouped': livestock_grouped}
     return render(request, 'livestock/livestock_list.html', context)
 
+
 def livestock_create(request):
-    return create_object(request, LiveStock, LiveStockForm, 'livestock/livestock_form.html', 'data_management:livestock_list')
+   return create_object(request, LiveStock, LiveStockForm, 'livestock/livestock_form.html', 'data_management:livestock_list')
 
 def livestock_detail(request, pk):
     return detail_object(request, LiveStock, 'livestock/livestock_detail.html', pk)
 
 def livestock_update(request, pk):
     return update_object(request, LiveStock, LiveStockForm, 'livestock/livestock_form.html', 'data_management:livestock_detail', pk)
+
 
 def livestock_delete(request, pk):
     return delete_object(request, LiveStock, 'data_management:livestock_list', 'livestock/livestock_confirm_delete.html', pk)

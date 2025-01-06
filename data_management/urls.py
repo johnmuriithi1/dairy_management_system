@@ -22,7 +22,7 @@ urlpatterns = [
     path('animalprofile/', views.animalprofile_list, name='animalprofile_list'),
     path('animalprofile/livestock/<int:livestock_pk>/', views.animalprofile_list, name='animalprofile_livestock_list'),
     path('animalprofile/create/', views.animalprofile_create, name='animalprofile_create'),
-    path('animalprofile/<int:pk>/', views.animalprofile_detail, name='animalprofile_detail'),  # Correct line
+    path('animalprofile/<int:pk>/', views.animalprofile_detail, name='animalprofile_detail'), 
     path('animalprofile/<int:pk>/update/', views.animalprofile_update, name='animalprofile_update'),
     path('animalprofile/<int:pk>/delete/', views.animalprofile_delete, name='animalprofile_delete'),
 

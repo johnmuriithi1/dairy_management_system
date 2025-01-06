@@ -10,83 +10,111 @@
         <div class="card-body">
             {% if form.errors %}
                 <div class="alert alert-danger">
-                    Please correct the errors below.
+                    There were errors in your form. Please correct them below:
+                    <ul class="list-unstyled">
+                        {% for field in form %}
+                            {% if field.errors %}
+                                <li>
+                                    {{ field.label }}: {{ field.errors|striptags }}
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
                 </div>
             {% endif %}
 
-            <div class="row">  {# Use a row for better layout #}
-                <div class="col-md-6"> {# Left Column #}
-                    {{ form.name.label_tag }} {{ form.name }}
-                    {% if form.name.errors %}
-                        <div class="invalid-feedback d-block">
-                            {{ form.name.errors|join:", " }}
-                        </div>
-                    {% endif %}
-                    <br>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        {{ form.livestock.label_tag }}
+                        {{ form.livestock }}
+                        {% if form.livestock.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.livestock.errors|join:", " }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="form-group">
+                        {{ form.name.label_tag }}
+                        {{ form.name }}
+                        {% if form.name.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.name.errors|join:", " }}
+                            </div>
+                        {% endif %}
+                    </div>
 
-                    **{{ form.livestock_type.label_tag }}**  {{ form.livestock_type }}
-                    {% if form.livestock_type.errors %}
-                        <div class="invalid-feedback d-block">
-                            {{ form.livestock_type.errors|join:", " }}
-                        </div>
-                    {% endif %}
-                    <br>
+                    <div class="form-group">
+                        {{ form.weight.label_tag }}
+                        {{ form.weight }}
+                        {% if form.weight.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.weight.errors|join:", " }}
+                            </div>
+                        {% endif %}
+                    </div>
 
-                    {{ form.weight.label_tag }} {{ form.weight }}
-                    {% if form.weight.errors %}
-                        <div class="invalid-feedback d-block">
-                            {{ form.weight.errors|join:", " }}
-                        </div>
-                    {% endif %}
-                    <br>
+                    <div class="form-group">
+                        {{ form.date_weighted.label_tag }}
+                        {{ form.date_weighted }}
+                        {% if form.date_weighted.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.date_weighted.errors|join:", " }}
+                            </div>
+                        {% endif %}
+                    </div>
 
-                    {{ form.date_weighted.label_tag }} {{ form.date_weighted }}
-                    {% if form.date_weighted.errors %}
-                        <div class="invalid-feedback d-block">
-                            {{ form.date_weighted.errors|join:", " }}
-                        </div>
-                    {% endif %}
-                    <br>
-
-                    {{ form.date_of_birth.label_tag }} {{ form.date_of_birth }}
-                    {% if form.date_of_birth.errors %}
-                        <div class="invalid-feedback d-block">
-                            {{ form.date_of_birth.errors|join:", " }}
-                        </div>
-                    {% endif %}
-                    <br>
+                    <div class="form-group">
+                        {{ form.date_of_birth.label_tag }}
+                        {{ form.date_of_birth }}
+                        {% if form.date_of_birth.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.date_of_birth.errors|join:", " }}
+                            </div>
+                        {% endif %}
+                    </div>
                 </div>
-                <div class="col-md-6"> {# Right Column #}
-                    {{ form.tag.label_tag }} {{ form.tag }}
-                    {% if form.tag.errors %}
-                        <div class="invalid-feedback d-block">
-                            {{ form.tag.errors|join:", " }}
-                        </div>
-                    {% endif %}
-                    <br>
 
-                    {{ form.photo.label_tag }} {{ form.photo }}
-                    {% if form.photo.errors %}
-                        <div class="invalid-feedback d-block">
-                            {{ form.photo.errors|join:", " }}
-                        </div>
-                    {% endif %}
-                    <br>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        {{ form.tag.label_tag }}
+                        {{ form.tag }}
+                        {% if form.tag.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.tag.errors|join:", " }}
+                            </div>
+                        {% endif %}
+                    </div>
 
-                    {{ form.uploaded_document.label_tag }} {{ form.uploaded_document }}
-                    {% if form.uploaded_document.errors %}
-                        <div class="invalid-feedback d-block">
-                            {{ form.uploaded_document.errors|join:", " }}
-                        </div>
-                    {% endif %}
-                    <br>
-                    {{ form.remarks.label_tag }} {{ form.remarks }}
-                    {% if form.remarks.errors %}
-                        <div class="invalid-feedback d-block">
-                            {{ form.remarks.errors|join:", " }}
-                        </div>
-                    {% endif %}
-                    <br>
+                    <div class="form-group">
+                        {{ form.photo.label_tag }}
+                        {{ form.photo }}
+                        {% if form.photo.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.photo.errors|join:", " }}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        {{ form.uploaded_document.label_tag }}
+                        {{ form.uploaded_document }}
+                        {% if form.uploaded_document.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.uploaded_document.errors|join:", " }}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        {{ form.remarks.label_tag }}
+                        {{ form.remarks }}
+                        {% if form.remarks.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.remarks.errors|join:", " }}
+                            </div>
+                        {% endif %}
+                    </div>
                 </div>
             </div>
 
