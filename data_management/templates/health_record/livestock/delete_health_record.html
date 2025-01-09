@@ -1,0 +1,15 @@
+{% extends 'users_management/base.html' %}
+
+{% block title %}Delete Health Record{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>Delete Health Record</h1>
+    <p>Are you sure you want to delete the health record for {{ health_record.animal }}?</p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Delete</button>
+        <a href="{% url 'data_management:health_record_list' %}{% if health_record.animal %}?animal_id={{ health_record.animal.id }}{% endif %}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,11 @@
+{% extends 'users_management/base.html' %}
+{% block title %}Update {{ livestock_type.name }}{% endblock %}
+{% block content %}
+    <h1>Update Livestock Type: {{ livestock_type.name }}</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-success">Update</button>
+        <a href="{% url 'livestock_type_list' %}" class="btn btn-secondary">Cancel</a>
+    </form>
+{% endblock %}

@@ -1,0 +1,36 @@
+{% extends 'users_management/base.html' %}
+
+{% block title %}Health Records{% endblock %}
+
+{% block content %}
+<h1>Health Records</h1>
+{% if health_records %}
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Animal</th>
+                <th>Date</th>
+                <th>Description</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for record in health_records %}
+            <tr>
+                <td>{{ record.animal }}</td>
+                <td>{{ record.date }}</td>
+                <td>{{ record.description }}</td>
+                <td>
+                    <a href="{% url 'data_management:update_health_record' record.pk %}" class="btn btn-sm btn-warning">Edit</a>
+                    <a href="{% url 'data_management:delete_health_record' record.pk %}" class="btn btn-sm btn-danger">Delete</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <p>No health records found.</p>
+{% endif %}
+<a href="{% url 'data_management:create_health_record' %}{% if animal %}?animal_id={{ animal.id }}{% endif %}" class="btn btn-primary">Add Health Record</a>
+
+{% endblock %}

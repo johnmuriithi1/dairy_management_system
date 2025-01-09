@@ -1,14 +1,15 @@
 {% extends 'users_management/base.html' %}
 {% block title %}{{ livestock_type.name }} Details{% endblock %}
 {% block content %}
-    <h1>{{ livestock_type.name }} (Livestock Type)</h1> {# Clarified Heading #}
+    <h1>{{ livestock_type.name }} (Livestock Type)</h1>
+    <p><strong>Description:</strong> {{ livestock_type.description }}</p>
 
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2>Breeds of {{ livestock_type.name }} ({{ livestock_and_profiles|length }})</h2> {# More specific heading #}
-        <a href="{% url 'data_management:livestock_create' %}?livestock_type={{livestock_type.pk}}" class="btn btn-primary">Add New Breed</a> {# Correct Link #}
+        <h2>Breeds of {{ livestock_type.name }} ({{ livestock_and_profiles|length }})</h2>
+        <a href="{% url 'data_management:livestock_create' %}?livestock_type={{livestock_type.pk}}" class="btn btn-primary">Add New Breed</a>
     </div>
 
-    {% if has_livestock %}
+    {% if livestock_and_profiles %}
         <table class="table">
             <thead>
                 <tr>
@@ -41,9 +42,8 @@
             </tbody>
         </table>
     {% else %}
-        <p>No Breeds of this type have been added yet.</p>
+        <p>No breeds have been added for this livestock type yet.</p>
     {% endif %}
 
-    <a href="{% url 'data_management:livestock_type_list'%}" class="btn btn-secondary mt-3">Back to Livestock Type List</a>
-
+    <a href="{% url 'livestock_type_list' %}" class="btn btn-secondary mt-3">Back to Livestock Type List</a>
 {% endblock %}

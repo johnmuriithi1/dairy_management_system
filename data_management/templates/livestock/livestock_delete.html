@@ -1,0 +1,11 @@
+{% extends 'users_management/base.html' %}
+{% block title %}Delete Livestock{% endblock %}
+{% block content %}
+    <h1>Delete Livestock</h1>
+    <p>Are you sure you want to delete "{{ livestock.name }}"?</p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Yes, Delete</button>
+        <a href="{% url 'livestock_list' %}" class="btn btn-secondary">Cancel</a>
+    </form>
+{% endblock %}

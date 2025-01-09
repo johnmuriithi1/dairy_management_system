@@ -1,0 +1,14 @@
+{% extends 'users_management/base.html' %}
+
+{% block title %}Confirm Deletion{% endblock %}
+
+{% block content %}
+    <h1 class="text-danger">Confirm Deletion</h1>
+    <p>Are you sure you want to delete <strong>{{ object }}</strong>? This action cannot be undone.</p>
+
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Delete</button>
+        <a href="{{ cancel_url }}" class="btn btn-secondary">Cancel</a>
+    </form>
+{% endblock %}

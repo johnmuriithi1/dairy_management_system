@@ -9,170 +9,134 @@ from .models import (
     VaccinationRecord,
     BreedingRecord,
     DeathRecord,
-    Event
+    Event,
 )
 
+
+# Livestock Type Form
 class LivestockTypeForm(forms.ModelForm):
-    """Form for creating or updating LivestockType."""
     class Meta:
         model = LivestockType
-        fields = ['name']
+        fields = ['name', 'description']
         widgets = {
-            'name': forms.TextInput(attrs={'class': 'form-control'}),
+            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter livestock type name'}),
+            'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Enter description'}),
         }
 
+
+# Livestock Form
 class LivestockForm(forms.ModelForm):
-    """Form for creating or updating Livestock."""
     class Meta:
         model = Livestock
-        fields = ['farmer', 'livestock_type', 'name']
+        fields = ['name', 'livestock_type', 'date_of_birth', 'gender', 'unique_id']
         widgets = {
-            'farmer': forms.Select(attrs={'class': 'form-control'}),
-            'livestock_type': forms.CheckboxSelectMultiple(),
-            'name': forms.TextInput(attrs={'class': 'form-control'}),
+            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter livestock name'}),
+            'livestock_type': forms.Select(attrs={'class': 'form-control'}),
+            'date_of_birth': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'gender': forms.Select(attrs={'class': 'form-control'}),
+            'unique_id': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter unique identifier'}),
         }
 
+
+# Animal Profile Form
 class AnimalProfileForm(forms.ModelForm):
-    """Form for creating or updating AnimalProfile."""
-    
     class Meta:
         model = AnimalProfile
-        fields = ['weight', 'remarks', 'date_of_birth', 'tag', 'name', 'photo', 'uploaded_document']
+        fields = ['livestock', 'health_status', 'weight', 'birth_weight', 'notes']
         widgets = {
-            'weight': forms.NumberInput(attrs={'class': 'form-control'}),
-            'remarks': forms.Textarea(attrs={'class': 'form-control'}),
-            'date_of_birth': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
-            'tag': forms.TextInput(attrs={'class': 'form-control'}),
-            'name': forms.TextInput(attrs={'class': 'form-control'}),
-            'photo': forms.ClearableFileInput(attrs={'class': 'form-control-file'}),
-            'uploaded_document': forms.ClearableFileInput(attrs={'class': 'form-control-file'}),
+            'livestock': forms.Select(attrs={'class': 'form-control'}),
+            'health_status': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter health status'}),
+            'weight': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter weight in kg'}),
+            'birth_weight': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter birth weight in kg'}),
+            'notes': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Enter notes'}),
         }
 
-    def __init__(self, *args, **kwargs):
-        livestock = kwargs.pop('livestock', None)
-        super(AnimalProfileForm, self).__init__(*args, **kwargs)
-        if livestock:
-            self.fields['livestock'] = forms.ModelChoiceField(queryset=Livestock.objects.filter(pk=livestock.pk), initial=livestock)
 
+# Milk Production Form
 class MilkProductionForm(forms.ModelForm):
     class Meta:
         model = MilkProduction
-        fields = ['animal', 'production_date', 'quantity_litres']
+        fields = ['livestock', 'date', 'quantity']
         widgets = {
-            'production_date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
-            'quantity_litres': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.01'}),
+            'livestock': forms.Select(attrs={'class': 'form-control'}),
+            'date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'quantity': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter quantity in liters'}),
         }
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        if 'initial' in kwargs and 'animal' in kwargs['initial']:
-          self.fields['animal'].widget = forms.HiddenInput()
 
+# Health Record Form
 class HealthRecordForm(forms.ModelForm):
-    """Form for creating or updating HealthRecord."""
     class Meta:
         model = HealthRecord
-        fields = ['animal', 'date', 'description', 'treatment']
+        fields = ['livestock', 'date', 'issue', 'treatment', 'veterinarian']
         widgets = {
-            'animal': forms.Select(attrs={'class': 'form-control'}),
-            'date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
-            'description': forms.Textarea(attrs={'class': 'form-control'}),
-            'treatment': forms.Textarea(attrs={'class': 'form-control'}),
+            'livestock': forms.Select(attrs={'class': 'form-control'}),
+            'date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'issue': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter health issue'}),
+            'treatment': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Enter treatment details'}),
+            'veterinarian': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter veterinarian name'}),
         }
 
+
+# Feed Form
 class FeedForm(forms.ModelForm):
-    """Form for creating or updating Feed."""
     class Meta:
         model = Feed
-        fields = ['name', 'quantity', 'price']
+        fields = ['livestock', 'date', 'feed_type', 'quantity']
         widgets = {
-            'name': forms.TextInput(attrs={'class': 'form-control'}),
-            'quantity': forms.NumberInput(attrs={'class': 'form-control'}),
-            'price': forms.NumberInput(attrs={'class': 'form-control'}),
+            'livestock': forms.Select(attrs={'class': 'form-control'}),
+            'date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'feed_type': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter feed type'}),
+            'quantity': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter quantity in kg'}),
         }
 
+
+# Vaccination Record Form
 class VaccinationRecordForm(forms.ModelForm):
-    """Form for creating or updating VaccinationRecord."""
     class Meta:
         model = VaccinationRecord
-        fields = ['animal', 
-                  'vaccine_name', 
-                  "date_given", 
-                  "administered_by",
-                  "next_vaccination_date",
-                  "batch_number"]
+        fields = ['livestock', 'vaccine_name', 'date_administered', 'next_due_date']
         widgets = {
-            "animal": forms.Select(attrs={"class": "form-control"}),
-            "vaccine_name": forms.TextInput(attrs={"class": "form-control"}),
-            "date_given": forms.DateInput(attrs={"type": "date", "class": "form-control"}),
-            "administered_by": forms.TextInput(attrs={"class": "form-control"}),
-            "next_vaccination_date": forms.DateInput(attrs={"type": "date", "class": "form-control"}),
-            "batch_number": forms.TextInput(attrs={"class": "form-control"}),
+            'livestock': forms.Select(attrs={'class': 'form-control'}),
+            'vaccine_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter vaccine name'}),
+            'date_administered': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'next_due_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
         }
 
+
+# Breeding Record Form
 class BreedingRecordForm(forms.ModelForm):
-    """Form for creating or updating BreedingRecord."""
     class Meta:
         model = BreedingRecord
-        fields = ['sire', 
-                  "dam",
-                  "breeding_date", 
-                  "expected_birth_date", 
-                  "offspring", 
-                  "notes", 
-                  "remarks"]
+        fields = ['livestock', 'mating_date', 'expected_due_date', 'outcome']
         widgets = {
-            "sire": forms.Select(attrs={"class": "form-control"}),
-            "dam": forms.Select(attrs={"class": "form-control"}),
-            "breeding_date": forms.DateInput(attrs={"type": "date", "class": "form-control"}),
-            "expected_birth_date": forms.DateInput(attrs={"type": "date", "class": "form-control"}),
-            "offspring": forms.Select(attrs={"class": "form-control"}),
-            "notes": forms.Textarea(attrs={"class": "form-control"}),
-            "remarks": forms.Textarea(attrs={"class": "form-control"}),
+            'livestock': forms.Select(attrs={'class': 'form-control'}),
+            'mating_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'expected_due_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'outcome': forms.Select(attrs={'class': 'form-control'}),
         }
 
+
+# Death Record Form
 class DeathRecordForm(forms.ModelForm):
-    """Form for creating or updating DeathRecord."""
     class Meta:
         model = DeathRecord
-        fields = ['animal', 
-                  "date_of_death", 
-                  "cause_of_death", 
-                  "disposal_method", 
-                  "remarks"]
+        fields = ['livestock', 'date', 'cause']
         widgets = {
-            "animal": forms.Select(attrs={"class": "form-control"}),
-            "date_of_death": forms.DateInput(attrs={"type": "date", "class": "form-control"}),
-            "cause_of_death": forms.TextInput(attrs={"class": "form-control"}),
-            "disposal_method": forms.TextInput(attrs={"class": "form-control"}),
-            "remarks": forms.Textarea(attrs={"class": "form-control"}),
+            'livestock': forms.Select(attrs={'class': 'form-control'}),
+            'date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'cause': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter cause of death'}),
         }
 
-# Updated Event Form with Dropdown for Event Types
+
+# Event Form
 class EventForm(forms.ModelForm):
-    """Form for creating or updating Event."""
-    
-    # Define choices for event types
-    EVENT_TYPE_CHOICES = [
-        ('shearing', 'Shearing'),
-        ('calving',  'Calving'),
-        ('weaning',  'Weaning'),
-        ('vaccination',  'Vaccination'),
-        ('breeding',  'Breeding'),
-        # Add more predefined event types as needed
-    ]
-
-    # Use a ChoiceField for event_type
-    event_type = forms.ChoiceField(choices=EVENT_TYPE_CHOICES, widget=forms.Select(attrs={'class':'form-control'}))
-
-    # Meta class to define model and fields
     class Meta:
         model = Event
-        fields = ['animal',  'event_type',  'date',  'description',  'remarks']
+        fields = ['livestock', 'date', 'event_type', 'description']
         widgets = {
-            'animal': forms.Select(attrs={'class':'form-control'}),
-            'date': forms.DateInput(attrs={'type':'date','class':'form-control'}),
-            'description': forms.Textarea(attrs={'rows':'3','placeholder':'Enter event description...','class':'form-control'}),
-            'remarks': forms.Textarea(attrs={'rows':'3','placeholder':'Additional remarks...','class':'form-control'}),
+            'livestock': forms.Select(attrs={'class': 'form-control'}),
+            'date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'event_type': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter event type'}),
+            'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Enter event description'}),
         }
-

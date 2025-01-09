@@ -1,102 +1,140 @@
 from django.db import models
-from django.utils import timezone
-from user_management.models import Farmer  
+from django.utils.translation import gettext_lazy as _
 
+
+# Livestock Type Model
 class LivestockType(models.Model):
-    """Model representing different types of livestock (e.g., cows, goats)."""
-    name = models.CharField(max_length=50, unique=True)
+    name = models.CharField(max_length=100, unique=True, verbose_name=_("Livestock Type"))
+    description = models.TextField(blank=True, null=True, verbose_name=_("Description"))
 
     def __str__(self):
         return self.name
 
+
+# Livestock Model
 class Livestock(models.Model):
-    """Model representing specific breeds of livestock."""
-    farmer = models.ForeignKey(Farmer, on_delete=models.CASCADE, default=None)
-    livestock_type = models.ManyToManyField(LivestockType, related_name='livestock') 
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, verbose_name=_("Livestock Name"))
+    livestock_type = models.ForeignKey(
+        LivestockType, on_delete=models.CASCADE, related_name="livestocks", verbose_name=_("Livestock Type")
+    )
+    date_of_birth = models.DateField(blank=True, null=True, verbose_name=_("Date of Birth"))
+    gender_choices = [
+        ("male", _("Male")),
+        ("female", _("Female")),
+    ]
+    gender = models.CharField(max_length=6, choices=gender_choices, verbose_name=_("Gender"))
+    unique_id = models.CharField(max_length=50, unique=True, verbose_name=_("Unique Identifier"))
 
     def __str__(self):
-        return self.name
+        return f"{self.name} ({self.unique_id})"
 
+
+# Animal Profile Model
 class AnimalProfile(models.Model):
-    livestock = models.ForeignKey(Livestock, on_delete=models.CASCADE, related_name='profiles')
-    weight = models.FloatField()
-    date_weighted = models.DateField(auto_now_add=True)  # Automatically set when created
-    remarks = models.TextField(null=True, blank=True)
-    date_of_birth = models.DateField()
-    tag = models.CharField(max_length=20, unique=True, blank=True, null=True)
-    name = models.CharField(max_length=100, default="")
-    photo = models.ImageField(upload_to='animal_photos/', null=True, blank=True)
-    uploaded_document = models.FileField(upload_to='animal_docs/', null=True, blank=True)
+    livestock = models.ForeignKey(
+        Livestock, on_delete=models.CASCADE, related_name="profiles", verbose_name=_("Livestock")
+    )
+    health_status = models.CharField(max_length=100, verbose_name=_("Health Status"))
+    weight = models.DecimalField(max_digits=6, decimal_places=2, verbose_name=_("Weight (kg)"))
+    birth_weight = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True, verbose_name=_("Birth Weight (kg)"))
+    notes = models.TextField(blank=True, null=True, verbose_name=_("Notes"))
 
     def __str__(self):
-        return self.name
+        return f"Profile of {self.livestock}"
 
+
+# Milk Production Model
 class MilkProduction(models.Model):
-    """Model for recording milk production details for an animal."""
-    animal = models.ForeignKey(AnimalProfile, on_delete=models.CASCADE, related_name='milk_records', null=True)
-    production_date = models.DateField()
-    quantity_litres = models.FloatField()
+    livestock = models.ForeignKey(
+        Livestock, on_delete=models.CASCADE, related_name="milk_productions", verbose_name=_("Livestock")
+    )
+    date = models.DateField(verbose_name=_("Date"))
+    quantity = models.DecimalField(max_digits=5, decimal_places=2, verbose_name=_("Quantity (liters)"))
 
     def __str__(self):
-        return f"{self.animal.livestock.name} - {self.production_date}"
+        return f"Milk Production on {self.date} for {self.livestock}"
 
+
+# Health Record Model
 class HealthRecord(models.Model):
-    """Model for tracking health-related information for an animal."""
-    animal = models.ForeignKey(AnimalProfile, on_delete=models.CASCADE, related_name='health_records', null=True)
-    date = models.DateField()
-    description = models.TextField()
-    treatment = models.TextField()
+    livestock = models.ForeignKey(
+        Livestock, on_delete=models.CASCADE, related_name="health_records", verbose_name=_("Livestock")
+    )
+    date = models.DateField(verbose_name=_("Date"))
+    issue = models.CharField(max_length=255, verbose_name=_("Health Issue"))
+    treatment = models.TextField(verbose_name=_("Treatment Details"))
+    veterinarian = models.CharField(max_length=100, blank=True, null=True, verbose_name=_("Veterinarian"))
 
+    def __str__(self):
+        return f"Health Record for {self.livestock} on {self.date}"
+
+
+# Feed Model
 class Feed(models.Model):
-    """Model representing feed details."""
-    name = models.CharField(max_length=50)
-    quantity = models.FloatField()
-    price = models.FloatField()
+    livestock = models.ForeignKey(
+        Livestock, on_delete=models.CASCADE, related_name="feeds", verbose_name=_("Livestock")
+    )
+    date = models.DateField(verbose_name=_("Date"))
+    feed_type = models.CharField(max_length=100, verbose_name=_("Feed Type"))
+    quantity = models.DecimalField(max_digits=6, decimal_places=2, verbose_name=_("Quantity (kg)"))
 
+    def __str__(self):
+        return f"Feed for {self.livestock} on {self.date}"
+
+
+# Vaccination Record Model
 class VaccinationRecord(models.Model):
-    """Model for documenting vaccination events for an animal."""
-    animal = models.ForeignKey(AnimalProfile, on_delete=models.CASCADE, related_name='vaccination_records', null=True)
-    vaccine_name = models.CharField(max_length=100)
-    date_given = models.DateField()
-    administered_by = models.CharField(max_length=100, blank=True, null=True)  # Veterinarian or staff
-    next_vaccination_date = models.DateField(blank=True, null=True)
-    batch_number = models.CharField(max_length=50, blank=True, null=True)
+    livestock = models.ForeignKey(
+        Livestock, on_delete=models.CASCADE, related_name="vaccinations", verbose_name=_("Livestock")
+    )
+    vaccine_name = models.CharField(max_length=100, verbose_name=_("Vaccine Name"))
+    date_administered = models.DateField(verbose_name=_("Date Administered"))
+    next_due_date = models.DateField(blank=True, null=True, verbose_name=_("Next Due Date"))
 
     def __str__(self):
-        return f"{self.animal.livestock.name} - {self.vaccine_name} - {self.date_given}"
+        return f"Vaccination Record for {self.livestock}"
 
+
+# Breeding Record Model
 class BreedingRecord(models.Model):
-    """Model for recording breeding events between animals."""
-    sire = models.ForeignKey(AnimalProfile, on_delete=models.CASCADE, related_name='sire_of', null=True, blank=True)  # Father
-    dam = models.ForeignKey(AnimalProfile, on_delete=models.CASCADE, related_name='dam_of')  # Mother
-    breeding_date = models.DateField()
-    expected_birth_date = models.DateField(blank=True, null=True)
-    offspring = models.ForeignKey(Livestock, on_delete=models.SET_NULL, related_name='parent_of', null=True, blank=True)  # Child
-    notes = models.TextField(blank=True, null=True)
-    remarks = models.TextField(null=True, blank=True)
+    livestock = models.ForeignKey(
+        Livestock, on_delete=models.CASCADE, related_name="breeding_records", verbose_name=_("Livestock")
+    )
+    mating_date = models.DateField(verbose_name=_("Mating Date"))
+    expected_due_date = models.DateField(blank=True, null=True, verbose_name=_("Expected Due Date"))
+    outcome_choices = [
+        ("success", _("Success")),
+        ("failure", _("Failure")),
+        ("pending", _("Pending")),
+    ]
+    outcome = models.CharField(
+        max_length=7, choices=outcome_choices, default="pending", verbose_name=_("Outcome")
+    )
 
     def __str__(self):
-        return f"{self.dam.name} bred with {self.sire.name if self.sire else 'Unknown Sire'} on {self.breeding_date}"
+        return f"Breeding Record for {self.livestock} on {self.mating_date}"
 
+
+# Death Record Model
 class DeathRecord(models.Model):
-    """Model for tracking death events of animals."""
-    animal = models.ForeignKey(AnimalProfile, on_delete=models.CASCADE, related_name='death_records', null=True)
-    date_of_death = models.DateField()
-    cause_of_death = models.CharField(max_length=200, blank=True, null=True)
-    disposal_method = models.CharField(max_length=100, blank=True, null=True)
-    remarks = models.TextField(null=True, blank=True)
+    livestock = models.OneToOneField(
+        Livestock, on_delete=models.CASCADE, related_name="death_record", verbose_name=_("Livestock")
+    )
+    date = models.DateField(verbose_name=_("Date of Death"))
+    cause = models.CharField(max_length=255, verbose_name=_("Cause of Death"))
 
     def __str__(self):
-        return f"{self.animal.livestock.name} - {self.date_of_death}"
+        return f"Death Record for {self.livestock}"
 
+
+# Event Model
 class Event(models.Model):
-    """Model for recording significant events related to animals (e.g., shearing)."""
-    animal = models.ForeignKey(AnimalProfile, on_delete=models.CASCADE, related_name='event_records', null=True)
-    event_type = models.CharField(max_length=100)  # e.g., Shearing, Calving
-    date = models.DateField()
-    description = models.TextField(blank=True, null=True)
-    remarks = models.TextField(null=True, blank=True)
+    livestock = models.ForeignKey(
+        Livestock, on_delete=models.CASCADE, related_name="events", verbose_name=_("Livestock")
+    )
+    date = models.DateField(verbose_name=_("Event Date"))
+    event_type = models.CharField(max_length=100, verbose_name=_("Event Type"))
+    description = models.TextField(verbose_name=_("Description"))
 
     def __str__(self):
-        return f"{self.animal.livestock.name} - {self.event_type} - {self.date}"
+        return f"Event: {self.event_type} for {self.livestock} on {self.date}"

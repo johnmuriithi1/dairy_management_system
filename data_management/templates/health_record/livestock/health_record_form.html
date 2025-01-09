@@ -1,0 +1,18 @@
+{% extends 'users_management/base.html' %}
+
+{% block title %}{% if form.instance.pk %}Edit{% else %}Add{% endif %} Health Record{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>{% if form.instance.pk %}Edit{% else %}Add{% endif %} Health Record</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        {% if animal %}
+            <input type="hidden" name="animal" value="{{ animal.pk }}">
+        {% endif %}
+        <button type="submit" class="btn btn-primary">Save</button>
+        <a href="{% url 'data_management:health_record_list' %}{% if animal %}?animal_id={{ animal.id }}{% endif %}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}
