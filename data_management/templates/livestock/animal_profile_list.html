@@ -1,0 +1,62 @@
+{% extends 'users_management/base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block title %}Animal Profiles{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    {% if livestock %}
+        <h1>Animal Profiles for {{ livestock.name }}</h1>
+    {% else %}
+        <h1>All Animal Profiles</h1>
+    {% endif %}
+
+    <div class="d-flex justify-content-between mb-3">
+        {% if livestock %}
+            <a href="{% url 'data_management:create_animal_profile' %}?livestock_id={{ livestock.id }}" class="btn btn-primary">Add Animal Profile</a>
+        {% endif %}
+        <a href="{% url 'data_management:livestock_list' %}" class="btn btn-secondary">Back to Livestock List</a>
+    </div>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Weight</th>
+                <th>Date of Birth</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for animal in animal_profiles %}
+                <tr>
+                    <td>{{ animal.name }}</td>
+                    <td>{{ animal.weight|floatformat|intcomma }} kg</td>
+                    <td>{{ animal.date_of_birth|date:"d-m-Y" }}</td>
+                    <td>
+                        <a href="{% url 'data_management:view_animal_profile' animal.pk %}" class="btn btn-sm btn-info">View</a>
+                        <a href="{% url 'data_management:update_animal_profile' animal.pk %}" class="btn btn-sm btn-warning">Edit</a>
+                        <a href="{% url 'data_management:delete_animal_profile' animal.pk %}" class="btn btn-sm btn-danger delete-link">Delete</a>
+                        <a href="{% url 'data_management:create_milk_production' %}?animal_id={{ animal.pk }}" class="btn btn-sm btn-success">Add Milk Production</a>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="4">No animal profiles found{% if livestock %} for this {{ livestock.name }}{% endif %}.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="modal fade" id="deleteConfirmationModal" tabindex="-1" role="dialog" aria-labelledby="deleteConfirmationModalLabel" aria-hidden="true">
+        {# ... (modal code) ... #}
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    {# ... (javascript code) ... #}
+</script>
+{% endblock %}

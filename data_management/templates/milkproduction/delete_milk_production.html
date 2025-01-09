@@ -1,0 +1,13 @@
+{% extends 'users_management/base.html' %}
+{% block title %}Delete Milk Production{% endblock %}
+{% block content %}
+<div class="container mt-4">
+    <h1>Confirm Delete</h1>
+    <p>Are you sure you want to delete the milk production record for {{ milk_production.animal.name }} on {{ milk_production.production_date }}?</p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Yes, Delete</button>
+        <a href="{% url 'data_management:milk_production_list' %}?animal_id={{ milk_production.animal.id }}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}

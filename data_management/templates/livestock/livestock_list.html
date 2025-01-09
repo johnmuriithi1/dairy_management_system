@@ -1,32 +1,46 @@
 {% extends 'users_management/base.html' %}
 {% block title %}Livestock List{% endblock %}
-{% block content %}
-    <h1>Livestock List</h1>
-    <a href="{% url 'data_management:livestock_create' %}" class="btn btn-primary">Add Livestock</a>
 
-    <table class="table">
+{% block content %}
+<div class="container mt-4">
+    <h1>Livestock List</h1>
+
+    <div class="d-flex justify-content-between mb-3">
+        <a href="{% url 'data_management:create_livestock' %}" class="btn btn-primary">Add Livestock</a>
+    </div>
+
+    <table class="table table-striped">
         <thead>
             <tr>
-                <th>Livestock</th>
-                <th>Type</th>
-                <th>Count</th>
-                <th>Actions</th> {# Added Actions Header #}
+                <th>Livestock Type</th>
+                <th>Breed</th>
+                <th>Number of Animals</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
-        {% for item in livestock_grouped %}
-            <tr>
-                <td>{{ item.name }}</td>
-                <td>{{ item.livestock_type }}</td>
-                <td>{{ item.count }}</td>
-                <td> {# Actions Cell #}
-                    <a href="{% url 'data_management:livestock_type_detail' item.livestock_type.pk %}" class="btn btn-sm btn-info">View Animals</a>
-                </td>
-            </tr>
-        {% empty %}
-            <tr><td colspan="4">No livestock found.</td></tr>
-        {% endfor %}
+            {% for livestock in livestock_list %}
+                <tr>
+                    <td>
+                        {% if livestock.livestock_type %}
+                            {{ livestock.livestock_type.name }}
+                        {% else %}
+                            N/A
+                        {% endif %}
+                    </td>
+                    <td>{{ livestock.name }}</td>
+                    <td>{{ livestock.animal_profile_count }}</td>
+                    <td>
+                        <a href="{% url 'data_management:create_animal_profile' %}?livestock_id={{ livestock.id }}"class="btn btn-sm btn-info">Add Animal Profile</a>
+                        <a href="{% url 'data_management:animal_profile_list' %}?livestock_id={{ livestock.pk }}" class="btn btn-sm btn-success">View Animal Profiles</a>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="4">No livestock found.</td>
+                </tr>
+            {% endfor %}
         </tbody>
     </table>
-
+</div>
 {% endblock %}

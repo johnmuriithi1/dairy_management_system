@@ -1,0 +1,86 @@
+{% extends 'users_management/base.html' %}
+
+{% block title %}{{ animal_profile.name }}'s Profile{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>{{ animal_profile.name }}'s Profile</h1>
+
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4">
+                    {% if animal_profile.photo %}
+                        <img src="{{ animal_profile.photo.url }}" alt="{{ animal_profile.name }}'s photo" class="img-fluid rounded">
+                    {% else %}
+                        <p>No photo available.</p>
+                    {% endif %}
+                </div>
+                <div class="col-md-8">
+                    <dl>
+                        <dt>Type(s):</dt>
+                        <dd>
+                            {% if animal_profile.livestock.livestock_type.all %}
+                                <ul>
+                                    {% for livestock_type in animal_profile.livestock.livestock_type.all %}
+                                        <li>{{ livestock_type.name }}</li>
+                                    {% endfor %}
+                                </ul>
+                            {% else %}
+                                N/A
+                            {% endif %}
+                        </dd>
+
+                        <dt>Name:</dt>
+                        <dd>{{ animal_profile.name }}</dd>
+
+                        <dt>Breed:</dt>
+                        <dd>{{ animal_profile.livestock.name }}</dd>
+
+                        <dt>Weight:</dt>
+                        <dd>{{ animal_profile.weight }} kg</dd>
+
+                        <dt>Date of Birth:</dt>
+                        <dd>{{ animal_profile.date_of_birth }}</dd>
+
+                        <dt>Tag:</dt>
+                        <dd>{{ animal_profile.tag|default:"N/A" }}</dd>
+
+                        <dt>Remarks:</dt>
+                        <dd>{{ animal_profile.remarks|default:"N/A" }}</dd>
+
+                        {% if animal_profile.uploaded_document %}
+                            <dt>Document:</dt>
+                            <dd><a href="{{ animal_profile.uploaded_document.url }}" target="_blank">View Document</a></dd>
+                        {% endif %}
+
+                        <dt>Milk Production:</dt>
+                        <dd>
+                            <a href="{% url 'data_management:milk_production_list' %}?animal_id={{ animal_profile.id }}" class="btn btn-sm btn-info">View Records</a>
+                            <a href="{% url 'data_management:create_milk_production' %}?animal_id={{ animal_profile.id }}" class="btn btn-sm btn-primary">Add Record</a>
+                            {% if animal_profile.milk_records.all %}
+                                <ul>
+                                    {% for record in animal_profile.milk_records.all|slice:":5" %}
+                                        <li>{{ record.production_date }}: {{ record.quantity_litres }} litres</li>
+                                    {% endfor %}
+                                    {% if animal_profile.milk_records.count > 5 %}
+                                        <li><a href="{% url 'data_management:milk_production_list' %}?animal_id={{ animal_profile.id }}">View All</a></li>
+                                    {% endif %}
+                                </ul>
+                            {% else %}
+                                <p>No milk production records found.</p>
+                            {% endif %}
+                        </dd>
+
+                        {# Add other related models (Health Records, Vaccinations, etc.) here in a similar way as Milk Production #}
+
+                    </dl>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <a href="{% url 'data_management:animal_profile_list' %}?livestock_id={{ animal_profile.livestock.id }}" class="btn btn-secondary mt-3">Back to Profiles</a>
+    <a href="{% url 'data_management:update_animal_profile' animal_profile.pk %}" class="btn btn-warning mt-3">Edit Profile</a>
+</div>
+{% endblock %}

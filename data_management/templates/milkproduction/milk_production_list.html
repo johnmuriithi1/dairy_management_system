@@ -1,0 +1,40 @@
+{% extends 'users_management/base.html' %}
+{% block title %}Milk Production List{% endblock %}
+{% block content %}
+<div class="container mt-4">
+    <h1>Milk Production Records</h1>
+    <div class="d-flex justify-content-between mb-3">
+        <a href="{% url 'data_management:create_milk_production' %}" class="btn btn-primary">Add Milk Production</a>
+        {% if request.GET.animal_id %}
+            <a href="{% url 'data_management:view_animal_profile' request.GET.animal_id %}" class="btn btn-secondary">Back to Animal Profile</a>
+        {% endif %}
+    </div>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Animal</th>
+                <th>Production Date</th>
+                <th>Quantity (Litres)</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for record in milk_production_records %}
+            <tr>
+                <td>{{ record.animal.name }}</td>
+                <td>{{ record.production_date }}</td>
+                <td>{{ record.quantity_litres }}</td>
+                <td>
+                    <a href="{% url 'data_management:update_milk_production' record.pk %}" class="btn btn-sm btn-warning">Edit</a>
+                    <a href="{% url 'data_management:delete_milk_production' record.pk %}" class="btn btn-sm btn-danger">Delete</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4">No milk production records found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

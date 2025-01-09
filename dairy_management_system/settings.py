@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'supply_chain',
     'advisory_support',
     'django_filters',
+    'django.contrib.humanize',
 
 ]
 

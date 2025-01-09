@@ -1,39 +1,49 @@
 {% extends 'users_management/base.html' %}
 {% block title %}{{ livestock_type.name }} Details{% endblock %}
 {% block content %}
-    <h1>{{ livestock_type.name }}</h1>
+    <h1>{{ livestock_type.name }} (Livestock Type)</h1> {# Clarified Heading #}
 
-    <h2>Animals of this Breed ({{ zipped_data|length }})</h2>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>Breeds of {{ livestock_type.name }} ({{ livestock_and_profiles|length }})</h2> {# More specific heading #}
+        <a href="{% url 'data_management:livestock_create' %}?livestock_type={{livestock_type.pk}}" class="btn btn-primary">Add New Breed</a> {# Correct Link #}
+    </div>
 
     {% if has_livestock %}
-
-        <a href="{% url 'data_management:animalprofile_create' %}?livestock={{zipped_data.0.0.pk}}" class="btn btn-primary">Create Animal Profile</a>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Livestock Name</th>
-                <th>Profile</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for livestock, profile in zipped_data %}
+        <table class="table">
+            <thead>
                 <tr>
-                    <td>{{ livestock.name }}</td>
-                    <td>
-                        {% if profile %}
-                            <a href="{% url 'data_management:animalprofile_detail' profile.pk %}" class="btn btn-sm btn-info">View Profile</a>
-                        {% else %}
-                            No Profile Created
-                        {% endif %}
-                    </td>
+                    <th>Breed Name</th>
+                    <th>Animals</th>
+                    {% if user.is_superuser %}
+                        <th>Actions</th>
+                    {% endif %}
                 </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                {% for livestock, profile in livestock_and_profiles %}
+                    <tr>
+                        <td>{{ livestock.name }}</td>
+                        <td>
+                            {% if profile %}
+                                <a href="{% url 'data_management:animalprofile_detail' profile.pk %}" class="btn btn-sm btn-info">View Animal Profile</a>
+                            {% else %}
+                                <a href="{% url 'data_management:animalprofile_create' livestock_pk=livestock.pk %}" class="btn btn-sm btn-warning">Create Animal Profile</a>
+                            {% endif %}
+                        </td>
+                        {% if user.is_superuser %}
+                            <td>
+                                <a href="{% url 'data_management:livestock_update' livestock.pk %}" class="btn btn-sm btn-warning">Edit Breed</a>
+                                <a href="{% url 'data_management:livestock_delete' livestock.pk %}" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this breed?');">Delete Breed</a>
+                            </td>
+                        {% endif %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     {% else %}
-        <p>No Livestock of this type has been added yet</p>
+        <p>No Breeds of this type have been added yet.</p>
     {% endif %}
 
-    <a href="{% url 'data_management:livestock_list'%}" class="btn btn-secondary">Back to Livestock List</a>
+    <a href="{% url 'data_management:livestock_type_list'%}" class="btn btn-secondary mt-3">Back to Livestock Type List</a>
 
 {% endblock %}

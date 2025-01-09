@@ -1,0 +1,20 @@
+{% extends 'users_management/base.html' %}
+
+{% block title %}Add Animal Profile{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>Add Animal Profile for {{ livestock.name }}</h1>
+
+    {% if form %}  <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">Create</button>
+        <a href="{% url 'data_management:animal_profile_list' %}?livestock_id={{ livestock.id }}" class="btn btn-secondary">Cancel</a>
+    </form>
+    {% else %}
+        <p>Error: Form is not available. Please try again.</p>
+        <a href="{% url 'data_management:livestock_list' %}">Back to Livestock List</a>
+    {% endif %}
+</div>
+{% endblock %}
