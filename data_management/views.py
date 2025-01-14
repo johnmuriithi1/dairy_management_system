@@ -252,144 +252,264 @@ class MilkProductionDeleteView(GenericDeleteView):
 
 
 # HEALTH RECORD VIEWS
-class HealthRecordListView(GenericListView):
+class HealthRecordListView(ListView):
     model = HealthRecord
     template_name = "data_management/health_record_list.html"
+    context_object_name = "health_records"
 
-class HealthRecordCreateView(GenericCreateView):
+    def get_queryset(self):
+        animal_profile_id = self.request.GET.get('animal_profile')
+        if animal_profile_id:
+            return HealthRecord.objects.filter(animal_profile__id=animal_profile_id)
+        return HealthRecord.objects.all()
+
+class HealthRecordCreateView(CreateView):
     model = HealthRecord
     form_class = HealthRecordForm
     template_name = "data_management/health_record_form.html"
-    success_url = reverse_lazy("data_management:health_record_list")
-    success_message = "Health Record was successfully created."
 
-class HealthRecordUpdateView(GenericUpdateView):
+    def get_initial(self):
+        initial = super().get_initial()
+        animal_profile_id = self.request.GET.get('animal_profile')
+        if animal_profile_id:
+            animal_profile = get_object_or_404(AnimalProfile, id=animal_profile_id)
+            initial['animal_profile'] = animal_profile
+        return initial
+
+    def get_success_url(self):
+        animal_profile_id = self.object.animal_profile.id
+        return reverse("data_management:health_record_list") + f"?animal_profile={animal_profile_id}"
+
+class HealthRecordUpdateView(UpdateView):
     model = HealthRecord
     form_class = HealthRecordForm
     template_name = "data_management/health_record_form.html"
-    success_url = reverse_lazy("data_management:health_record_list")
-    success_message = "Health Record was successfully updated."
 
-class HealthRecordDeleteView(GenericDeleteView):
+    def get_success_url(self):
+        animal_profile_id = self.object.animal_profile.id
+        return reverse("data_management:health_record_list") + f"?animal_profile={animal_profile_id}"
+
+class HealthRecordDeleteView(DeleteView):
     model = HealthRecord
     success_url = reverse_lazy("data_management:health_record_list")
 
 
 # FEED VIEWS
-class FeedListView(GenericListView):
+class FeedListView(ListView):
     model = Feed
     template_name = "data_management/feed_list.html"
+    context_object_name = "feed_records"
 
-class FeedCreateView(GenericCreateView):
+    def get_queryset(self):
+        animal_profile_id = self.request.GET.get('animal_profile')
+        if animal_profile_id:
+            return Feed.objects.filter(animal_profile__id=animal_profile_id)
+        return Feed.objects.all()
+
+class FeedCreateView(CreateView):
     model = Feed
     form_class = FeedForm
     template_name = "data_management/feed_form.html"
-    success_url = reverse_lazy("data_management:feed_list")
-    success_message = "Feed Record was successfully created."
 
-class FeedUpdateView(GenericUpdateView):
+    def get_initial(self):
+        initial = super().get_initial()
+        animal_profile_id = self.request.GET.get('animal_profile')
+        if animal_profile_id:
+            animal_profile = get_object_or_404(AnimalProfile, id=animal_profile_id)
+            initial['animal_profile'] = animal_profile
+        return initial
+
+    def get_success_url(self):
+        animal_profile_id = self.object.animal_profile.id
+        return reverse("data_management:feed_list") + f"?animal_profile={animal_profile_id}"
+
+class FeedUpdateView(UpdateView):
     model = Feed
     form_class = FeedForm
     template_name = "data_management/feed_form.html"
-    success_url = reverse_lazy("data_management:feed_list")
-    success_message = "Feed Record was successfully updated."
 
-class FeedDeleteView(GenericDeleteView):
+    def get_success_url(self):
+        animal_profile_id = self.object.animal_profile.id
+        return reverse("data_management:feed_list") + f"?animal_profile={animal_profile_id}"
+
+class FeedDeleteView(DeleteView):
     model = Feed
     success_url = reverse_lazy("data_management:feed_list")
 
 
 # VACCINATION RECORD VIEWS
-class VaccinationRecordListView(GenericListView):
+class VaccinationRecordListView(ListView):
     model = VaccinationRecord
     template_name = "data_management/vaccination_record_list.html"
+    context_object_name = "vaccination_records"
 
-class VaccinationRecordCreateView(GenericCreateView):
+    def get_queryset(self):
+        animal_profile_id = self.request.GET.get('animal_profile')
+        if animal_profile_id:
+            return VaccinationRecord.objects.filter(animal_profile__id=animal_profile_id)
+        return VaccinationRecord.objects.all()
+
+class VaccinationRecordCreateView(CreateView):
     model = VaccinationRecord
     form_class = VaccinationRecordForm
     template_name = "data_management/vaccination_record_form.html"
-    success_url = reverse_lazy("data_management:vaccination_record_list")
-    success_message = "Vaccination Record was successfully created."
 
-class VaccinationRecordUpdateView(GenericUpdateView):
+    def get_initial(self):
+        initial = super().get_initial()
+        animal_profile_id = self.request.GET.get('animal_profile')
+        if animal_profile_id:
+            animal_profile = get_object_or_404(AnimalProfile, id=animal_profile_id)
+            initial['animal_profile'] = animal_profile
+        return initial
+
+    def get_success_url(self):
+        animal_profile_id = self.object.animal_profile.id
+        return reverse("data_management:vaccination_record_list") + f"?animal_profile={animal_profile_id}"
+
+class VaccinationRecordUpdateView(UpdateView):
     model = VaccinationRecord
     form_class = VaccinationRecordForm
     template_name = "data_management/vaccination_record_form.html"
-    success_url = reverse_lazy("data_management:vaccination_record_list")
-    success_message = "Vaccination Record was successfully updated."
 
-class VaccinationRecordDeleteView(GenericDeleteView):
+    def get_success_url(self):
+        animal_profile_id = self.object.animal_profile.id
+        return reverse("data_management:vaccination_record_list") + f"?animal_profile={animal_profile_id}"
+
+class VaccinationRecordDeleteView(DeleteView):
     model = VaccinationRecord
     success_url = reverse_lazy("data_management:vaccination_record_list")
 
 
 # BREEDING RECORD VIEWS
-class BreedingRecordListView(GenericListView):
+class BreedingRecordListView(ListView):
     model = BreedingRecord
     template_name = "data_management/breeding_record_list.html"
+    context_object_name = "breeding_records"
 
-class BreedingRecordCreateView(GenericCreateView):
+    def get_queryset(self):
+        animal_profile_id = self.request.GET.get('animal_profile')
+        if animal_profile_id:
+            return BreedingRecord.objects.filter(animal_profile__id=animal_profile_id)
+        return BreedingRecord.objects.all()
+
+class BreedingRecordCreateView(CreateView):
     model = BreedingRecord
     form_class = BreedingRecordForm
     template_name = "data_management/breeding_record_form.html"
-    success_url = reverse_lazy("data_management:breeding_record_list")
-    success_message = "Breeding Record was successfully created."
 
-class BreedingRecordUpdateView(GenericUpdateView):
+    def form_valid(self, form):
+        # Handle new animal birth
+        response = super().form_valid(form)
+        
+        # If the breeding record involves the birth of a new animal
+        if form.instance.is_birthing:
+            # Create a new animal profile (new born animal)
+            new_animal_profile = AnimalProfile.objects.create(
+                livestock=form.instance.livestock,
+                birth_date=form.instance.date_of_birth,
+                name=form.instance.newborn_name,
+                # Other necessary fields here...
+            )
+            # Optionally link the new animal profile to any other related data
+        return response
+
+    def get_success_url(self):
+        return reverse_lazy("data_management:breeding_record_list")
+
+class BreedingRecordUpdateView(UpdateView):
     model = BreedingRecord
     form_class = BreedingRecordForm
     template_name = "data_management/breeding_record_form.html"
-    success_url = reverse_lazy("data_management:breeding_record_list")
-    success_message = "Breeding Record was successfully updated."
 
-class BreedingRecordDeleteView(GenericDeleteView):
+    def get_success_url(self):
+        return reverse_lazy("data_management:breeding_record_list")
+
+class BreedingRecordDeleteView(DeleteView):
     model = BreedingRecord
     success_url = reverse_lazy("data_management:breeding_record_list")
 
 
 # DEATH RECORD VIEWS
-class DeathRecordListView(GenericListView):
+class DeathRecordListView(ListView):
     model = DeathRecord
     template_name = "data_management/death_record_list.html"
+    context_object_name = "death_records"
 
-class DeathRecordCreateView(GenericCreateView):
+    def get_queryset(self):
+        animal_profile_id = self.request.GET.get('animal_profile')
+        if animal_profile_id:
+            return DeathRecord.objects.filter(animal_profile__id=animal_profile_id)
+        return DeathRecord.objects.all()
+
+class DeathRecordCreateView(CreateView):
     model = DeathRecord
     form_class = DeathRecordForm
     template_name = "data_management/death_record_form.html"
-    success_url = reverse_lazy("data_management:death_record_list")
-    success_message = "Death Record was successfully created."
 
-class DeathRecordUpdateView(GenericUpdateView):
+    def get_initial(self):
+        initial = super().get_initial()
+        animal_profile_id = self.request.GET.get('animal_profile')
+        if animal_profile_id:
+            animal_profile = get_object_or_404(AnimalProfile, id=animal_profile_id)
+            initial['animal_profile'] = animal_profile
+        return initial
+
+    def get_success_url(self):
+        animal_profile_id = self.object.animal_profile.id
+        return reverse("data_management:death_record_list") + f"?animal_profile={animal_profile_id}"
+
+class DeathRecordUpdateView(UpdateView):
     model = DeathRecord
     form_class = DeathRecordForm
     template_name = "data_management/death_record_form.html"
-    success_url = reverse_lazy("data_management:death_record_list")
-    success_message = "Death Record was successfully updated."
 
-class DeathRecordDeleteView(GenericDeleteView):
+    def get_success_url(self):
+        animal_profile_id = self.object.animal_profile.id
+        return reverse("data_management:death_record_list") + f"?animal_profile={animal_profile_id}"
+
+class DeathRecordDeleteView(DeleteView):
     model = DeathRecord
     success_url = reverse_lazy("data_management:death_record_list")
 
 
 # EVENT VIEWS
-class EventListView(GenericListView):
+class EventListView(ListView):
     model = Event
     template_name = "data_management/event_list.html"
+    context_object_name = "events"
 
-class EventCreateView(GenericCreateView):
+    def get_queryset(self):
+        animal_profile_id = self.request.GET.get('animal_profile')
+        if animal_profile_id:
+            return Event.objects.filter(animal_profile__id=animal_profile_id)
+        return Event.objects.all()
+
+class EventCreateView(CreateView):
     model = Event
     form_class = EventForm
     template_name = "data_management/event_form.html"
-    success_url = reverse_lazy("data_management:event_list")
-    success_message = "Event '%(title)s' was successfully created."
 
-class EventUpdateView(GenericUpdateView):
+    def get_initial(self):
+        initial = super().get_initial()
+        animal_profile_id = self.request.GET.get('animal_profile')
+        if animal_profile_id:
+            animal_profile = get_object_or_404(AnimalProfile, id=animal_profile_id)
+            initial['animal_profile'] = animal_profile
+        return initial
+
+    def get_success_url(self):
+        animal_profile_id = self.object.animal_profile.id
+        return reverse("data_management:event_list") + f"?animal_profile={animal_profile_id}"
+
+class EventUpdateView(UpdateView):
     model = Event
     form_class = EventForm
     template_name = "data_management/event_form.html"
-    success_url = reverse_lazy("data_management:event_list")
-    success_message = "Event '%(title)s' was successfully updated."
 
-class EventDeleteView(GenericDeleteView):
+    def get_success_url(self):
+        animal_profile_id = self.object.animal_profile.id
+        return reverse("data_management:event_list") + f"?animal_profile={animal_profile_id}"
+
+class EventDeleteView(DeleteView):
     model = Event
     success_url = reverse_lazy("data_management:event_list")
