@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy,reverse
 from django.contrib import messages
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
 from django.contrib.messages.views import SuccessMessageMixin
@@ -39,17 +39,24 @@ class GenericUpdateView(SuccessMessageView, UpdateView):
 
 class GenericDeleteView(DeleteView):
     model = None
-    template_name = "data_management/confirm_delete.html"
+    template_name = "livestock/confirm_delete.html"
     success_url = None
 
 # LIVESTOCK TYPE VIEWS
-class LivestockTypeListView(GenericListView):
+class LivestockTypeListView(ListView):
     model = LivestockType
-    template_name = "livestock/livestock_list.html"
+    template_name = "livestock/livestock_type_list.html"
+    context_object_name = "livestock_types"
+
+    def get_queryset(self):
+        return LivestockType.objects.prefetch_related("livestocks")
 
 class LivestockTypeCreateView(GenericCreateView):
-    model= LivestockType
-    form_class = LivestockType
+    model = LivestockType
+    form_class = LivestockTypeForm  
+    template_name = "livestock/livestock_type_create.html"  
+    success_url = reverse_lazy("data_management:livestock_type_list")  # Redirect after successful creation
+    success_message = "Livestock Type '%(name)s' was successfully created."
 
 
 class LivestockTypeUpdateView(GenericUpdateView):
@@ -68,7 +75,21 @@ class LivestockTypeDeleteView(GenericDeleteView):
 class LivestockListView(GenericListView):
     model = Livestock
     template_name = "livestock/livestock_list.html"
-    context_object_name = "livestock_list"  # Updated to match template usage
+    context_object_name = "livestock_list"  # To match template usage
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        livestock_type_id = self.request.GET.get("livestock_type")
+        if livestock_type_id:
+            queryset = queryset.filter(livestock_type_id=livestock_type_id)
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        livestock_type_id = self.request.GET.get("livestock_type")
+        if livestock_type_id:
+            context["livestock_type"] = LivestockType.objects.filter(pk=livestock_type_id).first()
+        return context
 
 class LivestockCreateView(GenericCreateView):
     model = Livestock
@@ -76,6 +97,13 @@ class LivestockCreateView(GenericCreateView):
     template_name = "livestock/livestock_create.html"
     success_url = reverse_lazy("data_management:livestock_list")
     success_message = "Livestock '%(name)s' was successfully created."
+
+    def get_initial(self):
+        initial = super().get_initial()
+        livestock_type_id = self.request.GET.get('livestock_type')
+        if livestock_type_id:
+            initial['livestock_type'] = LivestockType.objects.filter(pk=livestock_type_id).first()
+        return initial
 
 class LivestockUpdateView(GenericUpdateView):
     model = Livestock
@@ -96,45 +124,125 @@ class LivestockDeleteView(GenericDeleteView):
 
 
 # ANIMAL PROFILE VIEWS
-class AnimalProfileListView(GenericListView):
+class AnimalProfileListView(ListView):
     model = AnimalProfile
-    template_name = "data_management/animal_profile_list.html"
+    template_name = "livestock/animal_profile_list.html"
+    context_object_name = "animal_profiles"
 
-class AnimalProfileCreateView(GenericCreateView):
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        livestock_id = self.request.GET.get('livestock')
+        if livestock_id:
+            queryset = queryset.filter(livestock__id=livestock_id)
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        livestock_id = self.request.GET.get('livestock')
+        if livestock_id:
+            context['livestock'] = get_object_or_404(Livestock, id=livestock_id)
+        return context
+
+class AnimalProfileCreateView(CreateView):
     model = AnimalProfile
     form_class = AnimalProfileForm
-    template_name = "data_management/animal_profile_form.html"
-    success_url = reverse_lazy("data_management:animal_profile_list")
-    success_message = "Animal Profile '%(name)s' was successfully created."
+    template_name = "livestock/animal_profile_form.html"
+
+    def get_initial(self):
+        """Prepopulate the livestock field if livestock ID is passed in the query."""
+        initial = super().get_initial()
+        livestock_id = self.request.GET.get("livestock")
+        if livestock_id:
+            livestock = get_object_or_404(Livestock, id=livestock_id)
+            initial["livestock"] = livestock
+        return initial
+
+    def get_context_data(self, **kwargs):
+        """Pass the livestock object to the template for cancel link."""
+        context = super().get_context_data(**kwargs)
+        livestock_id = self.request.GET.get("livestock")
+        if livestock_id:
+            context["livestock"] = get_object_or_404(Livestock, id=livestock_id)
+        return context
+
+    def get_success_url(self):
+        """Redirect to the animal profile list for the selected livestock."""
+        livestock_id = self.request.GET.get("livestock")
+        if livestock_id:
+            return reverse("data_management:animal_profile_list") + f"?livestock={livestock_id}"
+        return reverse("data_management:animal_profile_list")
+
+    
+    
 
 class AnimalProfileUpdateView(GenericUpdateView):
     model = AnimalProfile
     form_class = AnimalProfileForm
-    template_name = "data_management/animal_profile_form.html"
+    template_name = "livestock/animal_profile_form.html"
     success_url = reverse_lazy("data_management:animal_profile_list")
     success_message = "Animal Profile '%(name)s' was successfully updated."
 
+
+class AnimalProfileDetailView(DetailView):
+    model = AnimalProfile
+    template_name = "livestock/view_animal_profile.html"
+    context_object_name = "animal_profile"
+
+
 class AnimalProfileDeleteView(GenericDeleteView):
     model = AnimalProfile
+    template_name = "livestock/confirm_delete.html"
     success_url = reverse_lazy("data_management:animal_profile_list")
+    success_message = "Animal Profile was successfully deleted."
 
 
 # MILK PRODUCTION VIEWS
-class MilkProductionListView(GenericListView):
+class MilkProductionListView(ListView):
     model = MilkProduction
-    template_name = "data_management/milk_production_list.html"
+    template_name = "milkproduction/milk_production_list.html"
+    context_object_name = "milk_production_records"
 
-class MilkProductionCreateView(GenericCreateView):
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        animal_id = self.request.GET.get("animal_id")
+        if animal_id:
+            queryset = queryset.filter(animal_profile__id=animal_id)
+        return queryset
+
+
+class MilkProductionCreateView(CreateView):
     model = MilkProduction
     form_class = MilkProductionForm
-    template_name = "data_management/milk_production_form.html"
+    template_name = "milkproduction/milk_production_form.html"
     success_url = reverse_lazy("data_management:milk_production_list")
-    success_message = "Milk Production Record was successfully created."
+
+    def get_initial(self):
+        initial = super().get_initial()
+        # Get the animal_profile_id from the query parameters
+        animal_profile_id = self.request.GET.get("animal_profile")
+        if animal_profile_id:
+            # Fetch the AnimalProfile instance
+            animal_profile = get_object_or_404(AnimalProfile, pk=animal_profile_id)
+            initial["animal_profile"] = animal_profile
+            # Ensure livestock is set based on the selected animal profile
+            initial["livestock"] = animal_profile.livestock  # Set livestock field from AnimalProfile
+
+        return initial
+
+    def form_valid(self, form):
+        # Set livestock explicitly if it's not already set
+        if not form.instance.livestock:
+            animal_profile = form.instance.animal_profile
+            form.instance.livestock = animal_profile.livestock  # Set livestock from the animal profile
+
+        return super().form_valid(form)
+
+
 
 class MilkProductionUpdateView(GenericUpdateView):
     model = MilkProduction
     form_class = MilkProductionForm
-    template_name = "data_management/milk_production_form.html"
+    template_name = "milkproduction/milk_production_form.html"
     success_url = reverse_lazy("data_management:milk_production_list")
     success_message = "Milk Production Record was successfully updated."
 

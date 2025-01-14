@@ -1,15 +1,26 @@
 {% extends 'users_management/base.html' %}
 {% block title %}Livestock List{% endblock %}
 {% block content %}
-    <h1>Livestock List</h1>
-    <a href="{% url 'data_management:create_livestock' %}" class="btn btn-primary mb-3">Add New Livestock</a>
-    
+    <h1>
+        {% if livestock_type %}
+             {{ livestock_type.name }} :Breeds
+        {% else %}
+            All Livestock
+        {% endif %}
+    </h1>
+
+    <a href="{% url 'data_management:create_livestock' %}{% if livestock_type %}?livestock_type={{ livestock_type.pk }}{% endif %}" class="btn btn-primary mb-3">
+        Add New Breed
+    </a>
+
     {% if livestock_list %}
         <table class="table">
             <thead>
                 <tr>
                     <th>Name</th>
-                    <th>Type</th>
+                    <th>Date of Birth</th>
+                    <th>Gender</th>
+                    <th>Number of Animals</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -17,10 +28,16 @@
                 {% for livestock in livestock_list %}
                     <tr>
                         <td>{{ livestock.name }}</td>
-                        <td>{{ livestock.livestock_type.name }}</td>
+                        <td>{{ livestock.date_of_birth }}</td>
+                        <td>{{ livestock.get_gender_display }}</td>
+                        <td>
+                            <span class="badge bg-info">{{ livestock.animalprofile_set.count }}</span>
+                        </td>
                         <td>
                             <a href="{% url 'data_management:update_livestock' livestock.pk %}" class="btn btn-sm btn-warning">Edit</a>
                             <a href="{% url 'data_management:delete_livestock' livestock.pk %}" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this livestock?');">Delete</a>
+                            <a href="{% url 'data_management:animal_profile_create' %}?livestock={{ livestock.pk }}" class="btn btn-sm btn-success">Add Animal Profile</a>
+                            <a href="{% url 'data_management:animal_profile_list' %}?livestock={{ livestock.pk }}" class="btn btn-sm btn-primary">View Animal Profiles</a>
                         </td>
                     </tr>
                 {% endfor %}
@@ -29,4 +46,6 @@
     {% else %}
         <p>No livestock records found.</p>
     {% endif %}
+
+    <a href="{% url 'data_management:livestock_type_list' %}" class="btn btn-secondary">Back to Livestock Types</a>
 {% endblock %}

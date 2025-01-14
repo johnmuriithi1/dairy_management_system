@@ -1,13 +1,59 @@
-{% extends 'users_management/base.html' %}
-{% block title %}{% if form.instance.pk %}Edit{% else %}Add{% endif %} Milk Production{% endblock %}
+{% extends "users_management/base.html" %}
+
+{% block title %}Add Milk Production{% endblock %}
+
 {% block content %}
-<div class="container mt-4">
-    <h1>{% if form.instance.pk %}Edit{% else %}Add{% endif %} Milk Production</h1>
+    <h1>Add Milk Production</h1>
     <form method="post">
         {% csrf_token %}
-        {{ form.as_p }}
+        
+        <!-- Animal Name Field (instead of Livestock) -->
+        <div class="mb-3">
+            <label for="id_animal_name" class="form-label">Animal Name</label>
+            {{ form.animal_profile.name }}  <!-- Displays the animal's name directly from the AnimalProfile -->
+            <small class="form-text text-muted">
+                This field is automatically filled based on the selected Animal Profile.
+            </small>
+        </div>
+
+        <!-- Animal Profile Field -->
+        <div class="mb-3">
+            <label for="id_animal_profile" class="form-label">Animal Profile</label>
+            {{ form.animal_profile }}  <!-- Displays the animal profile selection field -->
+            <small class="form-text text-muted">
+                Select an animal profile (e.g., Jane).
+            </small>
+        </div>
+        
+        <!-- Livestock Field -->
+        <div class="mb-3">
+            <label for="id_livestock" class="form-label">Livestock</label>
+            {{ form.livestock }}  <!-- Ensure livestock is rendered -->
+            <small class="form-text text-muted">
+                This field is automatically populated based on the selected animal profile.
+            </small>
+        </div>
+        
+        <!-- Milk Quantity Field -->
+        <div class="mb-3">
+            <label for="id_milk_quantity" class="form-label">Milk Quantity (liters)</label>
+            {{ form.quantity }}
+            <small class="form-text text-muted">
+                Enter the amount of milk produced in liters.
+            </small>
+        </div>
+        
+        <!-- Date Recorded Field -->
+        <div class="mb-3">
+            <label for="id_date_recorded" class="form-label">Date Recorded</label>
+            {{ form.date }}
+            <small class="form-text text-muted">
+                Select the date when the milk production was recorded.
+            </small>
+        </div>
+        
+        <!-- Submit and Cancel Buttons -->
         <button type="submit" class="btn btn-primary">Save</button>
-        <a href="{% url 'data_management:milk_production_list' %}{% if request.GET.animal_id %}?animal_id={{ request.GET.animal_id }}{% endif %}" class="btn btn-secondary">Cancel</a>
+        <a href="{% url 'data_management:milk_production_list' %}" class="btn btn-secondary">Cancel</a>
     </form>
-</div>
 {% endblock %}

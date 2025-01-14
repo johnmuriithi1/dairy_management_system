@@ -17,7 +17,7 @@ class Livestock(models.Model):
     livestock_type = models.ForeignKey(
         LivestockType, on_delete=models.CASCADE, related_name="livestocks", verbose_name=_("Livestock Type")
     )
-    date_of_birth = models.DateField(blank=True, null=True, verbose_name=_("Date of Birth"))
+   
     gender_choices = [
         ("male", _("Male")),
         ("female", _("Female")),
@@ -34,11 +34,14 @@ class AnimalProfile(models.Model):
     livestock = models.ForeignKey(
         Livestock, on_delete=models.CASCADE, related_name="profiles", verbose_name=_("Livestock")
     )
+    name = models.CharField(max_length=100)
     health_status = models.CharField(max_length=100, verbose_name=_("Health Status"))
     weight = models.DecimalField(max_digits=6, decimal_places=2, verbose_name=_("Weight (kg)"))
     birth_weight = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True, verbose_name=_("Birth Weight (kg)"))
     notes = models.TextField(blank=True, null=True, verbose_name=_("Notes"))
-
+    profile_photo = models.ImageField(upload_to='animal_profiles/photos/', null=True, blank=True)  # New field for photo
+    document_upload = models.FileField(upload_to='animal_profiles/documents/', null=True, blank=True)  # New field for documents
+    date_of_birth = models.DateField(blank=True, null=True)
     def __str__(self):
         return f"Profile of {self.livestock}"
 
@@ -48,11 +51,12 @@ class MilkProduction(models.Model):
     livestock = models.ForeignKey(
         Livestock, on_delete=models.CASCADE, related_name="milk_productions", verbose_name=_("Livestock")
     )
+    animal_profile = models.ForeignKey(AnimalProfile, on_delete=models.CASCADE, related_name="milk_productions")
     date = models.DateField(verbose_name=_("Date"))
     quantity = models.DecimalField(max_digits=5, decimal_places=2, verbose_name=_("Quantity (liters)"))
 
     def __str__(self):
-        return f"Milk Production on {self.date} for {self.livestock}"
+        return f"{self.animal_profile.name} - {self.quantity} liters on {self.date}"
 
 
 # Health Record Model

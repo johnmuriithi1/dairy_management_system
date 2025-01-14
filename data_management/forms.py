@@ -28,11 +28,11 @@ class LivestockTypeForm(forms.ModelForm):
 class LivestockForm(forms.ModelForm):
     class Meta:
         model = Livestock
-        fields = ['name', 'livestock_type', 'date_of_birth', 'gender', 'unique_id']
+        fields = ['name', 'livestock_type', 'gender', 'unique_id']
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter livestock name'}),
             'livestock_type': forms.Select(attrs={'class': 'form-control'}),
-            'date_of_birth': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+           
             'gender': forms.Select(attrs={'class': 'form-control'}),
             'unique_id': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter unique identifier'}),
         }
@@ -42,9 +42,16 @@ class LivestockForm(forms.ModelForm):
 class AnimalProfileForm(forms.ModelForm):
     class Meta:
         model = AnimalProfile
-        fields = ['livestock', 'health_status', 'weight', 'birth_weight', 'notes']
+        fields = [
+            'livestock', 'name', 'profile_photo', 'document_upload', 'date_of_birth',
+            'health_status', 'weight', 'birth_weight', 'notes'
+        ]
         widgets = {
             'livestock': forms.Select(attrs={'class': 'form-control'}),
+            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter animal name'}),
+            'profile_photo': forms.ClearableFileInput(attrs={'class': 'form-control'}),
+            'document_upload': forms.ClearableFileInput(attrs={'class': 'form-control'}),
+            'date_of_birth': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'health_status': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter health status'}),
             'weight': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter weight in kg'}),
             'birth_weight': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter birth weight in kg'}),
@@ -56,13 +63,17 @@ class AnimalProfileForm(forms.ModelForm):
 class MilkProductionForm(forms.ModelForm):
     class Meta:
         model = MilkProduction
-        fields = ['livestock', 'date', 'quantity']
-        widgets = {
-            'livestock': forms.Select(attrs={'class': 'form-control'}),
-            'date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
-            'quantity': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter quantity in liters'}),
-        }
+        fields = ['animal_profile', 'livestock', 'quantity', 'date']
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # If an animal_profile is provided, prefill the livestock field
+        if 'animal_profile' in self.data:
+            animal_profile_id = self.data.get('animal_profile')
+            if animal_profile_id:
+                # Populate the livestock field based on the selected animal_profile
+                animal_profile = AnimalProfile.objects.get(pk=animal_profile_id)
+                self.fields['livestock'].initial = animal_profile.livestock
 
 # Health Record Form
 class HealthRecordForm(forms.ModelForm):

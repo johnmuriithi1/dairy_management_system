@@ -9,7 +9,7 @@ from .views import (
     VaccinationRecordListView, VaccinationRecordCreateView, VaccinationRecordUpdateView, VaccinationRecordDeleteView,
     BreedingRecordListView, BreedingRecordCreateView, BreedingRecordUpdateView, BreedingRecordDeleteView,
     DeathRecordListView, DeathRecordCreateView, DeathRecordUpdateView, DeathRecordDeleteView,
-    EventListView, EventCreateView, EventUpdateView, EventDeleteView
+    EventListView, EventCreateView, EventUpdateView, EventDeleteView,AnimalProfileDetailView
 )
 
 app_name = 'data_management'  
@@ -28,10 +28,11 @@ urlpatterns = [
     path('livestock/delete/<int:pk>/', LivestockDeleteView.as_view(), name='delete_livestock'),
 
     # Animal Profile URLs
-    path('animal-profile/', AnimalProfileListView.as_view(), name='animal_profile_list'),
-    path('animal-profile/create/', AnimalProfileCreateView.as_view(), name='create_animal_profile'),
-    path('animal-profile/update/<int:pk>/', AnimalProfileUpdateView.as_view(), name='update_animal_profile'),
-    path('animal-profile/delete/<int:pk>/', AnimalProfileDeleteView.as_view(), name='delete_animal_profile'),
+    path('animal-profiles/', AnimalProfileListView.as_view(), name='animal_profile_list'),
+    path('animal-profiles/create/', AnimalProfileCreateView.as_view(), name='animal_profile_create'),
+    path('animal-profile/<int:pk>/', AnimalProfileDetailView.as_view(), name='animal_profile_detail'),
+    path('animal-profiles/update/<int:pk>/', AnimalProfileUpdateView.as_view(), name='animalprofile_update'),
+    path('animal-profiles/delete/<int:pk>/', AnimalProfileDeleteView.as_view(), name='animalprofile_delete'),
 
     # Milk Production URLs
     path('milk-production/', MilkProductionListView.as_view(), name='milk_production_list'),

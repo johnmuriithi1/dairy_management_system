@@ -1,63 +1,61 @@
 {% extends 'users_management/base.html' %}
 
-{% block title %}{{ animal_profile.name }}'s Profile{% endblock %}
+{% block title %}Animal Profile Details{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
-    <h1 class="mb-4">{{ animal_profile.name }}'s Profile</h1>
+    <h1>Animal Profile: {{ animal_profile.name }}</h1>
+    
+    {% if animal_profile.profile_photo %}
+        <img src="{{ animal_profile.profile_photo.url }}" alt="{{ animal_profile.name }}" class="img-fluid" />
+    {% endif %}
+    
+    <table class="table">
+        <tr>
+            <th>Livestock</th>
+            <td>{{ animal_profile.livestock.name }}</td>
+        </tr>
+        <tr>
+            <th>Gender</th>
+            <td>{{ animal_profile.livestock.get_gender_display }}</td>
+        </tr>
+        <tr>
+            <th>Health Status</th>
+            <td>{{ animal_profile.health_status }}</td>
+        </tr>
+        <tr>
+            <th>Weight</th>
+            <td>{{ animal_profile.weight }} kg</td>
+        </tr>
+        <tr>
+            <th>Birth Weight</th>
+            <td>{{ animal_profile.birth_weight }} kg</td>
+        </tr>
+        <tr>
+            <th>Date of Birth</th>
+            <td>{{ animal_profile.date_of_birth }}</td>
+        </tr>
+        <tr>
+            <th>Notes</th>
+            <td>{{ animal_profile.notes }}</td>
+        </tr>
+        <tr>
+            <th>Document</th>
+            <td>
+                {% if animal_profile.document %}
+                    <a href="{{ animal_profile.document.url }}" target="_blank">Download Document</a>
+                {% else %}
+                    No document available.
+                {% endif %}
+            </td>
+        </tr>
+    </table>
 
-    <div class="card shadow-sm">
-        <div class="card-body">
-            <div class="row">
-                <div class="col-md-4 text-center">
-                    {% if animal_profile.photo %}
-                        <img src="{{ animal_profile.photo.url }}" alt="{{ animal_profile.name }}'s photo" class="img-fluid rounded mb-3" style="max-height: 300px; object-fit: cover;">
-                    {% else %}
-                        <div class="border rounded p-3 text-muted d-flex align-items-center justify-content-center" style="height: 300px;">No photo available</div>
-                    {% endif %}
-                </div>
-                <div class="col-md-8">
-                    <dl class="row">
-                        <dt class="col-sm-3 text-muted">Type(s):</dt>
-                        <dd class="col-sm-9">
-                            {% if animal_profile.livestock.livestock_type.all %}
-                                <ul>
-                                    {% for livestock_type in animal_profile.livestock.livestock_type.all %}
-                                        <li>{{ livestock_type.name }}</li>
-                                    {% endfor %}
-                                </ul>
-                            {% else %}
-                                N/A
-                            {% endif %}
-                        </dd>
-
-                        <!-- Simplified Record Links -->
-                        <dt class="col-sm-3 text-muted">Milk Production:</dt>
-                        <dd class="col-sm-9">
-                            <a href="{% url 'data_management:milk_production_list' %}?animal_id={{ animal_profile.id }}" class="btn btn-sm btn-info mb-2">View Records</a>
-                            <a href="{% url 'data_management:create_milk_production' %}?animal_id={{ animal_profile.id }}" class="btn btn-sm btn-primary mb-2">Add Record</a>
-                        </dd>
-
-                        <dt class="col-sm-3 text-muted">Health Records:</dt>
-                        <dd class="col-sm-9">
-                            <a href="{% url 'data_management:health_record_list' %}?animal_id={{ animal_profile.id }}" class="btn btn-sm btn-info mb-2">View Records</a>
-                            <a href="{% url 'data_management:create_health_record' %}?animal_id={{ animal_profile.id }}" class="btn btn-sm btn-primary mb-2">Add Record</a>
-                        </dd>
-
-                        <dt class="col-sm-3 text-muted">Vaccination Records:</dt>
-                        <dd class="col-sm-9">
-                            <a href="{% url 'data_management:vaccination_record_list' %}?animal_id={{ animal_profile.id }}" class="btn btn-sm btn-info mb-2">View Records</a>
-                            <a href="{% url 'data_management:create_vaccination_record' %}?animal_id={{ animal_profile.id }}" class="btn btn-sm btn-primary mb-2">Add Record</a>
-                        </dd>
-                    </dl>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="mt-3">
-        <a href="{% url 'data_management:animal_profile_list' %}?livestock_id={{ animal_profile.livestock.id }}" class="btn btn-secondary">Back to Profiles</a>
-        <a href="{% url 'data_management:update_animal_profile' animal_profile.pk %}" class="btn btn-warning">Edit Profile</a>
-    </div>
-</div>
+    {% if animal_profile.livestock.gender == "female" %}
+    <a href="{% url 'data_management:create_milk_production' %}?livestock={{ livestock.id }}&animal_profile={{ animal_profile.id }}">Add Milk Production</a>
+        <a href="{% url 'data_management:milk_production_list' %}" class="btn btn-info">View Milk Production</a>
+    {% endif %}
+    
+    <a href="{% url 'data_management:animalprofile_update' animal_profile.pk %}" class="btn btn-warning">Edit Profile</a>
+    <a href="{% url 'data_management:animalprofile_delete' animal_profile.pk %}" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this profile?');">Delete Profile</a>
+    <a href="{% url 'data_management:animal_profile_list' %}" class="btn btn-secondary">Back to List</a>
 {% endblock %}

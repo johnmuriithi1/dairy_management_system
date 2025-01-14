@@ -20,7 +20,7 @@ class LivestockTypeAdmin(admin.ModelAdmin):
 
 # Livestock Admin
 class LivestockAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'livestock_type', 'date_of_birth', 'gender', 'unique_id')
+    list_display = ('id', 'name', 'livestock_type', 'gender', 'unique_id')
     list_filter = ('livestock_type', 'gender')
     search_fields = ('name', 'unique_id')
 

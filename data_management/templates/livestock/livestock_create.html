@@ -1,7 +1,7 @@
 {% extends 'users_management/base.html' %}
-{% block title %}Add New Livestock{% endblock %}
+{% block title %}Add New Breed{% endblock %}
 {% block content %}
-    <h1>Add New Livestock</h1>
+    <h1>Add New Breed</h1>
     <form method="post">
         {% csrf_token %}
         {{ form.as_p }}

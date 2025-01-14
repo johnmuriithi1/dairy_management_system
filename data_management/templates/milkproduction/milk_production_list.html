@@ -1,5 +1,7 @@
 {% extends 'users_management/base.html' %}
+
 {% block title %}Milk Production List{% endblock %}
+
 {% block content %}
 <div class="container mt-4">
     <h1>Milk Production Records</h1>
@@ -8,7 +10,10 @@
         {% if request.GET.animal_id %}
             <a href="{% url 'data_management:view_animal_profile' request.GET.animal_id %}" class="btn btn-secondary">Back to Animal Profile</a>
         {% endif %}
+        <!-- Add the Back to Animal Profile List Button -->
+        <a href="{% url 'data_management:animal_profile_list' %}" class="btn btn-info">Back to Animal Profile List</a>
     </div>
+    
     <table class="table table-striped">
         <thead>
             <tr>
@@ -21,9 +26,9 @@
         <tbody>
             {% for record in milk_production_records %}
             <tr>
-                <td>{{ record.animal.name }}</td>
-                <td>{{ record.production_date }}</td>
-                <td>{{ record.quantity_litres }}</td>
+                <td>{{ record.animal_profile.name }}</td>
+                <td>{{ record.date }}</td>
+                <td>{{ record.quantity }}</td>
                 <td>
                     <a href="{% url 'data_management:update_milk_production' record.pk %}" class="btn btn-sm btn-warning">Edit</a>
                     <a href="{% url 'data_management:delete_milk_production' record.pk %}" class="btn btn-sm btn-danger">Delete</a>

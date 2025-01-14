@@ -1,20 +1,46 @@
 {% extends 'users_management/base.html' %}
-
-{% block title %}Add Animal Profile{% endblock %}
-
+{% block title %}Animal Profile Form{% endblock %}
 {% block content %}
-<div class="container mt-4">
-    <h1>Add Animal Profile for {{ livestock.name }}</h1>
-
-    {% if form %}  <form method="post" enctype="multipart/form-data">
+    <h1>{{ form.instance.pk|yesno:"Edit Animal Profile,Create Animal Profile" }}</h1>
+    <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="btn btn-primary">Create</button>
-        <a href="{% url 'data_management:animal_profile_list' %}?livestock_id={{ livestock.id }}" class="btn btn-secondary">Cancel</a>
+        <div class="mb-3">
+            <label for="id_livestock" class="form-label">Livestock</label>
+            {{ form.livestock }}
+        </div>
+        <div class="mb-3">
+            <label for="id_name" class="form-label">Animal Name</label>
+            {{ form.name }}
+        </div>
+        <div class="mb-3">
+            <label for="id_profile_photo" class="form-label">Profile Photo</label>
+            {{ form.profile_photo }}
+        </div>
+        <div class="mb-3">
+            <label for="id_document_upload" class="form-label">Document Upload</label>
+            {{ form.document_upload }}
+        </div>
+        <div class="mb-3">
+            <label for="id_date_of_birth" class="form-label">Date of Birth</label>
+            {{ form.date_of_birth }}
+        </div>
+        <div class="mb-3">
+            <label for="id_health_status" class="form-label">Health Status</label>
+            {{ form.health_status }}
+        </div>
+        <div class="mb-3">
+            <label for="id_weight" class="form-label">Weight (kg)</label>
+            {{ form.weight }}
+        </div>
+        <div class="mb-3">
+            <label for="id_birth_weight" class="form-label">Birth Weight (kg)</label>
+            {{ form.birth_weight }}
+        </div>
+        <div class="mb-3">
+            <label for="id_notes" class="form-label">Notes</label>
+            {{ form.notes }}
+        </div>
+        <button type="submit" class="btn btn-primary">Save</button>
+        <a href="{% url 'data_management:animal_profile_list' %}?livestock={{ livestock.id }}" class="btn btn-secondary">Cancel</a>
     </form>
-    {% else %}
-        <p>Error: Form is not available. Please try again.</p>
-        <a href="{% url 'data_management:livestock_list' %}">Back to Livestock List</a>
-    {% endif %}
-</div>
 {% endblock %}
